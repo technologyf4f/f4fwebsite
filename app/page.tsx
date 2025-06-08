@@ -124,7 +124,7 @@ const UserCircle = ({ className = "" }: { className?: string }) => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
-      d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+      d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 01-18 0 9 9 0 0118 0z"
     />
   </svg>
 )
@@ -186,7 +186,7 @@ const Star = ({ className = "", filled = false }: { className?: string; filled?:
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
-      d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+      d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-.181h4.914a1 1 0 00.951-.69l1.519-4.674z"
     />
   </svg>
 )
@@ -381,22 +381,19 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Browser Tabs - ALWAYS visible */}
-      <div className="bg-gray-200 p-1 flex overflow-x-auto gap-1 text-xs mx-2">
-        <div className="bg-white px-3 py-1 rounded-t whitespace-nowrap border-t-2 border-blue-500">F4F | HOME</div>
-        <div className="bg-gray-300 px-3 py-1 rounded-t whitespace-nowrap">v0 by Vercel</div>
-        <div className="bg-gray-300 px-3 py-1 rounded-t whitespace-nowrap">Commercial</div>
-      </div>
-
       {/* Header */}
       <header className="border-b sticky top-0 bg-white z-50">
         <div className="container mx-auto px-2 py-3">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-1">
-              <div className="w-8 h-8 bg-red-600 flex items-center justify-center rounded">
-                <div className="w-4 h-4 border-2 border-white"></div>
-              </div>
-              <div className="text-xs font-bold text-gray-900">
+            <div className="flex items-center space-x-2">
+              <Image
+                src="/placeholder-logo.png"
+                alt="Framework 4 Future Logo"
+                width={40}
+                height={40}
+                className="rounded"
+              />
+              <div className="text-sm font-bold text-gray-900">
                 <div>FRAMEWORK</div>
                 <div>4 FUTURE</div>
               </div>
@@ -589,6 +586,131 @@ export default function Home() {
               <div>
                 <div className="text-4xl font-bold mb-2">25+</div>
                 <div className="text-indigo-200">Partner Organizations</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How We Started Section */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">How We Started</h2>
+            <p className="text-gray-600">The journey that led to Framework 4 Future</p>
+            <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Story Content */}
+            <div className="space-y-6">
+              <div className="bg-white rounded-lg shadow-lg p-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Our Beginning</h3>
+                <div className="space-y-4 text-gray-700 leading-relaxed">
+                  <p>
+                    Framework 4 Future was born from a simple yet powerful observation: young people in the Carolinas
+                    had incredible potential but lacked structured opportunities to develop their leadership skills and
+                    engage meaningfully with their communities.
+                  </p>
+                  <p>
+                    In 2018, a group of passionate educators, community leaders, and youth advocates came together with
+                    a shared vision. They recognized that traditional approaches to youth development weren't fully
+                    addressing the unique challenges and opportunities facing today's generation.
+                  </p>
+                  <p>
+                    What started as informal mentoring sessions in local community centers has grown into a
+                    comprehensive network of programs that have impacted hundreds of young leaders across North and
+                    South Carolina.
+                  </p>
+                </div>
+              </div>
+
+              {/* Timeline */}
+              <div className="bg-gray-50 rounded-lg p-6">
+                <h4 className="text-xl font-bold text-gray-900 mb-4">Key Milestones</h4>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-4 h-4 bg-indigo-600 rounded-full mt-1 flex-shrink-0"></div>
+                    <div>
+                      <div className="font-semibold text-gray-900">2018</div>
+                      <div className="text-gray-600 text-sm">Founded with first mentoring program</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-4 h-4 bg-indigo-600 rounded-full mt-1 flex-shrink-0"></div>
+                    <div>
+                      <div className="font-semibold text-gray-900">2019</div>
+                      <div className="text-gray-600 text-sm">Launched Youth Leadership Summit</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-4 h-4 bg-indigo-600 rounded-full mt-1 flex-shrink-0"></div>
+                    <div>
+                      <div className="font-semibold text-gray-900">2020</div>
+                      <div className="text-gray-600 text-sm">Adapted programs for virtual engagement</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-4 h-4 bg-indigo-600 rounded-full mt-1 flex-shrink-0"></div>
+                    <div>
+                      <div className="font-semibold text-gray-900">2021</div>
+                      <div className="text-gray-600 text-sm">Expanded to serve both Carolinas</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-4 h-4 bg-indigo-600 rounded-full mt-1 flex-shrink-0"></div>
+                    <div>
+                      <div className="font-semibold text-gray-900">2024</div>
+                      <div className="text-gray-600 text-sm">Reached 500+ youth leaders trained</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Visual Content */}
+            <div className="space-y-6">
+              <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden relative">
+                <Image
+                  src="/placeholder.svg?height=400&width=600&text=Founding+Story"
+                  alt="Framework 4 Future founding story"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden relative">
+                  <Image
+                    src="/placeholder.svg?height=300&width=300&text=Early+Days"
+                    alt="Early days of Framework 4 Future"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden relative">
+                  <Image
+                    src="/placeholder.svg?height=300&width=300&text=First+Summit"
+                    alt="First Youth Leadership Summit"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Founder Quote */}
+              <div className="bg-indigo-50 border-l-4 border-indigo-600 p-6 rounded-r-lg">
+                <blockquote className="text-gray-700 italic mb-4">
+                  "We believed that every young person deserves the opportunity to discover their potential and make a
+                  meaningful impact in their community. Framework 4 Future was our way of making that belief a reality."
+                </blockquote>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                  <div>
+                    <div className="font-semibold text-gray-900">Sarah Mitchell</div>
+                    <div className="text-sm text-gray-600">Co-Founder & Executive Director</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
