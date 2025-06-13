@@ -197,7 +197,7 @@ const Heart = ({ className = "" }: { className?: string }) => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
-      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+      d="M4.318 6.318a4 4 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
     />
   </svg>
 )
@@ -360,73 +360,48 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Mobile Status Bar - ALWAYS visible */}
-      <div className="bg-gray-800 text-white p-2 flex justify-between items-center text-sm">
-        <span>12:51 PM</span>
-        <div className="flex items-center gap-2">
-          <span>📶</span>
-          <span>📶</span>
-          <span>🔋 15%</span>
-        </div>
-      </div>
-
-      {/* Browser Address Bar - ALWAYS visible */}
-      <div className="bg-gray-100 p-2 flex justify-between items-center mx-2 my-1 rounded-lg">
-        <div className="flex items-center gap-2">
-          <Menu className="h-4 w-4 text-gray-500" />
-        </div>
-        <span className="text-gray-700 text-sm">framework4future.org</span>
-        <div className="flex items-center gap-2">
-          <span className="text-blue-500">↻</span>
-        </div>
-      </div>
-
       {/* Header */}
       <header className="border-b sticky top-0 bg-white z-50">
         <div className="container mx-auto px-2 py-3">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
               <Image
-                src="/placeholder-logo.png"
+                src="/f4f-logo.png"
                 alt="Framework 4 Future Logo"
-                width={40}
-                height={40}
-                className="rounded"
+                width={200}
+                height={60}
+                className="h-10 w-auto"
               />
-              <div className="text-sm font-bold text-gray-900">
-                <div>FRAMEWORK</div>
-                <div>4 FUTURE</div>
-              </div>
             </div>
 
             <nav className="hidden lg:flex items-center ml-2">
               <button
                 onClick={() => scrollToSection("about")}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-1 text-xs"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg"
               >
                 About
               </button>
               <button
                 onClick={() => scrollToSection("programs")}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-1 text-xs"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg"
               >
                 Programs
               </button>
               <button
                 onClick={() => scrollToSection("blogs")}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-1 text-xs"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg"
               >
                 Blogs
               </button>
               <button
                 onClick={() => scrollToSection("contact")}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-1 text-xs"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg"
               >
                 Contact
               </button>
               <button
                 onClick={() => scrollToSection("feedback")}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-1 text-xs"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg"
               >
                 Feedback
               </button>
@@ -593,7 +568,7 @@ export default function Home() {
       </section>
 
       {/* How We Started Section */}
-      <section className="container mx-auto px-4 py-16">
+      <section id="how-we-started" className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">How We Started</h2>
@@ -696,19 +671,20 @@ export default function Home() {
                     className="object-cover"
                   />
                 </div>
-              </div>
 
-              {/* Founder Quote */}
-              <div className="bg-indigo-50 border-l-4 border-indigo-600 p-6 rounded-r-lg">
-                <blockquote className="text-gray-700 italic mb-4">
-                  "We believed that every young person deserves the opportunity to discover their potential and make a
-                  meaningful impact in their community. Framework 4 Future was our way of making that belief a reality."
-                </blockquote>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-                  <div>
-                    <div className="font-semibold text-gray-900">Sarah Mitchell</div>
-                    <div className="text-sm text-gray-600">Co-Founder & Executive Director</div>
+                {/* Founder Quote */}
+                <div className="bg-indigo-50 border-l-4 border-indigo-600 p-6 rounded-r-lg">
+                  <blockquote className="text-gray-700 italic mb-4">
+                    "We believed that every young person deserves the opportunity to discover their potential and make a
+                    meaningful impact in their community. Framework 4 Future was our way of making that belief a
+                    reality."
+                  </blockquote>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                    <div>
+                      <div className="font-semibold text-gray-900">Sarah Mitchell</div>
+                      <div className="text-sm text-gray-600">Co-Founder & Executive Director</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -747,7 +723,7 @@ export default function Home() {
       </section>
 
       {/* Great Memories Section */}
-      <section className="container mx-auto px-4 py-16 bg-gray-50">
+      <section id="great-memories" className="container mx-auto px-4 py-16 bg-gray-50">
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Great Memories</h2>
           <p className="text-gray-600">Capturing moments of growth, leadership, and community impact</p>
