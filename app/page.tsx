@@ -2,8 +2,13 @@
 
 import type React from "react"
 
-import { useState, type ReactNode } from "react"
+import type { ReactNode } from "react"
 import Image from "next/image"
+import { useState } from "react"
+
+import { LoginDialog } from "@/components/login-dialog"
+import { BlogManagementDialog } from "@/components/blog-management-dialog"
+import { EventManagementDialog } from "@/components/event-management-dialog"
 
 // Inline UI Components
 const Button = ({
@@ -227,7 +232,7 @@ const Target = ({ className = "" }: { className?: string }) => (
 // Main Component
 export default function Home() {
   // State Management
-  const [programs] = useState([
+  const [programs, setPrograms] = useState([
     {
       id: "1",
       name: "Youth Leadership Summit",
@@ -253,7 +258,7 @@ export default function Home() {
     },
   ])
 
-  const [blogs] = useState([
+  const [blogs, setBlogs] = useState([
     {
       id: "1",
       title: "Youth Leadership in the Digital Age",
@@ -275,25 +280,6 @@ export default function Home() {
       readingTime: "7 min read",
       categories: ["Community", "Inclusion"],
       featured: false,
-    },
-  ])
-
-  const [feedbacks] = useState([
-    {
-      id: "1",
-      name: "David Thompson",
-      reason:
-        "The leadership workshop was transformative for my daughter. She came back with so much confidence and new skills!",
-      date: "June 4, 2024",
-      rating: 5,
-    },
-    {
-      id: "2",
-      name: "Maria Rodriguez",
-      reason:
-        "I appreciate the community service opportunities provided. It's helped my son understand the importance of giving back.",
-      date: "May 28, 2024",
-      rating: 4,
     },
   ])
 
@@ -322,17 +308,33 @@ export default function Home() {
     message: "",
   })
 
-  const [feedbackForm, setFeedbackForm] = useState({
-    name: "",
-    reason: "",
-    rating: 5,
-  })
-
   const [donationForm, setDonationForm] = useState({
     name: "",
     amount: "",
     reason: "",
   })
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [currentUser, setCurrentUser] = useState("")
+  const [showLoginDialog, setShowLoginDialog] = useState(false)
+  const [showAdminMenu, setShowAdminMenu] = useState(false)
+  const [showBlogManagement, setShowBlogManagement] = useState(false)
+  const [showEventManagement, setShowEventManagement] = useState(false)
+
+  // Add a click outside handler to close the menu when clicking elsewhere:
+  // Add this useEffect after the state declarations:
+  useState(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showAdminMenu) {
+        setShowAdminMenu(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [showAdminMenu])
 
   const totalDonations = donations.reduce((sum, donation) => sum + donation.amount, 0)
 
@@ -346,16 +348,28 @@ export default function Home() {
     setContactForm({ firstName: "", lastName: "", email: "", subject: "", message: "" })
   }
 
-  const handleFeedbackSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    alert("Thank you for your feedback!")
-    setFeedbackForm({ name: "", reason: "", rating: 5 })
-  }
-
   const handleDonationSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     alert("Thank you for your donation! In a real application, this would redirect to a secure payment processor.")
     setDonationForm({ name: "", amount: "", reason: "" })
+  }
+
+  const handleLogin = (username: string) => {
+    setIsLoggedIn(true)
+    setCurrentUser(username)
+  }
+
+  const handleLogout = () => {
+    setIsLoggedIn(false)
+    setCurrentUser("")
+  }
+
+  const handleManageBlogs = () => {
+    setShowBlogManagement(true)
+  }
+
+  const handleManageEvents = () => {
+    setShowEventManagement(true)
   }
 
   return (
@@ -382,10 +396,10 @@ export default function Home() {
                 About
               </button>
               <button
-                onClick={() => scrollToSection("programs")}
+                onClick={() => scrollToSection("events")}
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg"
               >
-                Programs
+                Events
               </button>
               <button
                 onClick={() => scrollToSection("blogs")}
@@ -394,16 +408,10 @@ export default function Home() {
                 Blogs
               </button>
               <button
-                onClick={() => scrollToSection("contact")}
+                onClick={() => scrollToSection("contact-us")}
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg"
               >
-                Contact
-              </button>
-              <button
-                onClick={() => scrollToSection("feedback")}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg"
-              >
-                Feedback
+                Contact Us
               </button>
             </nav>
 
@@ -415,10 +423,90 @@ export default function Home() {
               >
                 Donate
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
-                <UserCircle className="h-4 w-4" />
-                <span className="sr-only">User account</span>
-              </Button>
+              {isLoggedIn ? (
+                <div className="relative">
+                  <Button
+                    variant="ghost"
+                    className="flex items-center gap-2 rounded-full h-8 px-3"
+                    onClick={() => setShowAdminMenu(!showAdminMenu)}
+                  >
+                    <UserCircle className="h-4 w-4" />
+                    <span className="hidden sm:inline text-sm font-medium">{currentUser}</span>
+                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </Button>
+                  {showAdminMenu && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <div className="flex items-center gap-2">
+                          <UserCircle className="h-4 w-4" />
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium">Welcome back!</span>
+                            <span className="text-xs text-gray-500">{currentUser}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="py-1">
+                        <button
+                          onClick={handleManageBlogs}
+                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                          <span>Manage Blogs</span>
+                        </button>
+                        <button
+                          onClick={handleManageEvents}
+                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                            />
+                          </svg>
+                          <span>Manage Events</span>
+                        </button>
+                      </div>
+                      <div className="border-t border-gray-100">
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                            />
+                          </svg>
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full h-8 w-8"
+                  onClick={() => setShowLoginDialog(true)}
+                >
+                  <UserCircle className="h-4 w-4" />
+                  <span className="sr-only">User account</span>
+                </Button>
+              )}
               <Button variant="ghost" size="icon" className="lg:hidden h-8 w-8">
                 <Menu className="h-4 w-4" />
                 <span className="sr-only">Menu</span>
@@ -454,13 +542,13 @@ export default function Home() {
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
-                  onClick={() => scrollToSection("programs")}
+                  onClick={() => scrollToSection("events")}
                   className="bg-indigo-700 hover:bg-indigo-800 text-white px-8 py-6 text-lg rounded-md"
                 >
-                  View Programs
+                  View Events
                 </Button>
                 <Button
-                  onClick={() => scrollToSection("contact")}
+                  onClick={() => scrollToSection("contact-us")}
                   variant="outline"
                   className="px-8 py-6 text-lg rounded-md"
                 >
@@ -688,10 +776,10 @@ export default function Home() {
       </section>
 
       {/* Programs Section */}
-      <section id="programs" className="container mx-auto px-4 py-16">
+      <section id="events" className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Our Programs</h2>
-          <p className="text-gray-600">Empowering youth through leadership and community engagement</p>
+          <h2 className="text-3xl font-bold mb-4">Our Events</h2>
+          <p className="text-gray-600">Empowering youth through leadership and community engagement events</p>
           <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
         </div>
 
@@ -780,9 +868,9 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="container mx-auto px-4 py-16 bg-gray-50">
+      <section id="contact-us" className="container mx-auto px-4 py-16 bg-gray-50">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Contact</h2>
+          <h2 className="text-3xl font-bold mb-4">Contact Us</h2>
           <p className="text-gray-600">Get in touch with our team</p>
           <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
         </div>
@@ -915,106 +1003,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Feedback Section */}
-      <section id="feedback" className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Feedback</h2>
-          <p className="text-gray-600">Share your experience with our programs</p>
-          <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
-        </div>
-
-        <div className="max-w-4xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Recent Feedback */}
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Community Feedback</h3>
-              <div className="space-y-4">
-                {feedbacks.map((feedback) => (
-                  <Card key={feedback.id}>
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-semibold text-gray-900">{feedback.name}</h4>
-                        {feedback.rating && (
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-4 w-4 ${i < feedback.rating! ? "text-yellow-400" : "text-gray-300"}`}
-                                filled={i < feedback.rating!}
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-gray-600 text-sm mb-2">"{feedback.reason}"</p>
-                      <p className="text-xs text-gray-500">{feedback.date}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Feedback Form */}
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MessageSquare className="h-5 w-5 text-indigo-600" />
-                    Share Your Feedback
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleFeedbackSubmit} className="space-y-6">
-                    <div>
-                      <Label htmlFor="feedbackName">Your Name</Label>
-                      <Input
-                        id="feedbackName"
-                        value={feedbackForm.name}
-                        onChange={(e) => setFeedbackForm({ ...feedbackForm, name: e.target.value })}
-                        placeholder="Enter your full name"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="feedbackReason">Your Feedback</Label>
-                      <Textarea
-                        id="feedbackReason"
-                        value={feedbackForm.reason}
-                        onChange={(e) => setFeedbackForm({ ...feedbackForm, reason: e.target.value })}
-                        placeholder="Share your experience with our programs..."
-                        rows={6}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label>Rating</Label>
-                      <div className="flex items-center gap-1 mt-2">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            type="button"
-                            onClick={() => setFeedbackForm({ ...feedbackForm, rating: star })}
-                            className="focus:outline-none"
-                          >
-                            <Star
-                              className={`h-6 w-6 ${star <= feedbackForm.rating ? "text-yellow-400" : "text-gray-300"}`}
-                              filled={star <= feedbackForm.rating}
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full bg-indigo-700 hover:bg-indigo-800">
-                      Submit Feedback
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Donate Section */}
       <section id="donate" className="container mx-auto px-4 py-16 bg-gray-50">
         <div className="text-center mb-12">
@@ -1132,6 +1120,19 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} onLogin={handleLogin} />
+      <BlogManagementDialog
+        open={showBlogManagement}
+        onOpenChange={setShowBlogManagement}
+        blogs={blogs}
+        onUpdateBlogs={setBlogs}
+      />
+      <EventManagementDialog
+        open={showEventManagement}
+        onOpenChange={setShowEventManagement}
+        events={programs}
+        onUpdateEvents={setPrograms}
+      />
     </div>
   )
 }
