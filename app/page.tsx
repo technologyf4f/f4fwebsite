@@ -409,12 +409,6 @@ export default function Home() {
 
             <div className="flex items-center gap-1">
               <Button
-                onClick={() => scrollToSection("programs")}
-                className="hidden lg:inline-flex bg-indigo-700 hover:bg-indigo-800 text-xs px-2 py-1 h-7"
-              >
-                Programs
-              </Button>
-              <Button
                 onClick={() => scrollToSection("donate")}
                 variant="default"
                 className="hidden lg:inline-flex bg-green-600 hover:bg-green-700 text-xs px-2 py-1 h-7"
