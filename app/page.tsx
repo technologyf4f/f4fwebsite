@@ -4,11 +4,15 @@ import type React from "react"
 
 import type { ReactNode } from "react"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import { LoginDialog } from "@/components/login-dialog"
 import { BlogManagementDialog } from "@/components/blog-management-dialog"
 import { EventManagementDialog } from "@/components/event-management-dialog"
+import { getEvents, type Event } from "@/lib/events-api"
+import { getBlogs, type Blog } from "@/lib/blogs-api"
+import { isSupabaseConfigured } from "@/lib/supabase"
+import { SupabaseSetupGuide } from "@/components/supabase-setup-guide"
 
 // Inline UI Components
 const Button = ({
@@ -229,59 +233,26 @@ const Target = ({ className = "" }: { className?: string }) => (
   </svg>
 )
 
+const Info = ({ className = "" }: { className?: string }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
+  </svg>
+)
+
 // Main Component
 export default function Home() {
   // State Management
-  const [programs, setPrograms] = useState([
-    {
-      id: "1",
-      name: "Youth Leadership Summit",
-      description:
-        "Annual summit bringing together young leaders from across the Carolinas to share ideas and build networks.",
-      image: "/placeholder.svg?height=300&width=400&text=Leadership+Summit",
-      date: "March 15, 2024",
-    },
-    {
-      id: "2",
-      name: "Community Service Initiative",
-      description: "Monthly community service projects focusing on local environmental and social issues.",
-      image: "/placeholder.svg?height=300&width=400&text=Community+Service",
-      date: "Every 2nd Saturday",
-    },
-    {
-      id: "3",
-      name: "Civic Engagement Workshop",
-      description:
-        "Interactive workshops teaching young people about local government and how to make their voices heard.",
-      image: "/placeholder.svg?height=300&width=400&text=Civic+Workshop",
-      date: "April 22, 2024",
-    },
-  ])
-
-  const [blogs, setBlogs] = useState([
-    {
-      id: "1",
-      title: "Youth Leadership in the Digital Age",
-      excerpt: "Exploring how young leaders are leveraging technology to create positive change in their communities.",
-      image: "/placeholder.svg?height=300&width=400&text=Digital+Leadership",
-      date: "June 2, 2024",
-      author: "Maria Rodriguez",
-      readingTime: "5 min read",
-      categories: ["Leadership", "Technology"],
-      featured: true,
-    },
-    {
-      id: "2",
-      title: "Building Inclusive Communities Through Service",
-      excerpt: "How community service projects are bringing diverse groups together to solve local challenges.",
-      image: "/placeholder.svg?height=300&width=400&text=Inclusive+Communities",
-      date: "May 15, 2024",
-      author: "James Washington",
-      readingTime: "7 min read",
-      categories: ["Community", "Inclusion"],
-      featured: false,
-    },
-  ])
+  const [programs, setPrograms] = useState<Event[]>([])
+  const [blogs, setBlogs] = useState<Blog[]>([])
+  const [isLoadingPrograms, setIsLoadingPrograms] = useState(true)
+  const [isLoadingBlogs, setIsLoadingBlogs] = useState(true)
+  const [showConfigNotice, setShowConfigNotice] = useState(false)
+  const [showSetupGuide, setShowSetupGuide] = useState(false)
 
   const [donations] = useState([
     {
@@ -320,6 +291,41 @@ export default function Home() {
   const [showAdminMenu, setShowAdminMenu] = useState(false)
   const [showBlogManagement, setShowBlogManagement] = useState(false)
   const [showEventManagement, setShowEventManagement] = useState(false)
+
+  // Load data from Supabase on component mount
+  useEffect(() => {
+    // Check if Supabase is configured
+    if (!isSupabaseConfigured()) {
+      setShowConfigNotice(true)
+    }
+
+    loadPrograms()
+    loadBlogs()
+  }, [])
+
+  const loadPrograms = async () => {
+    setIsLoadingPrograms(true)
+    try {
+      const eventsData = await getEvents()
+      setPrograms(eventsData)
+    } catch (error) {
+      console.error("Failed to load events:", error)
+    } finally {
+      setIsLoadingPrograms(false)
+    }
+  }
+
+  const loadBlogs = async () => {
+    setIsLoadingBlogs(true)
+    try {
+      const blogsData = await getBlogs()
+      setBlogs(blogsData)
+    } catch (error) {
+      console.error("Failed to load blogs:", error)
+    } finally {
+      setIsLoadingBlogs(false)
+    }
+  }
 
   // Add a click outside handler to close the menu when clicking elsewhere:
   // Add this useEffect after the state declarations:
@@ -374,6 +380,50 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Configuration Notice */}
+      {showConfigNotice && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <Info className="h-5 w-5 text-yellow-400" />
+            </div>
+            <div className="ml-3 flex-1">
+              <p className="text-sm text-yellow-700">
+                <strong>Demo Mode:</strong> Supabase is not configured. Data will be stored locally and reset on page
+                refresh.
+                {isLoggedIn && " Admin features will work but changes won't persist."}
+              </p>
+              <div className="mt-2 flex gap-2">
+                <button onClick={() => setShowConfigNotice(false)} className="text-yellow-700 underline text-sm">
+                  Dismiss
+                </button>
+                <button
+                  onClick={() => setShowSetupGuide(true)}
+                  className="text-yellow-700 underline text-sm font-medium"
+                >
+                  Setup Supabase
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Setup Guide Modal */}
+      {showSetupGuide && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+              <h2 className="text-xl font-bold">Supabase Setup Guide</h2>
+              <Button variant="ghost" onClick={() => setShowSetupGuide(false)}>
+                ✕
+              </Button>
+            </div>
+            <SupabaseSetupGuide />
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="border-b sticky top-0 bg-white z-50">
         <div className="container mx-auto px-2 py-3">
@@ -783,25 +833,31 @@ export default function Home() {
           <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {programs.map((program) => (
-            <Card key={program.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video relative">
-                <Image src={program.image || "/placeholder.svg"} alt={program.name} fill className="object-cover" />
-              </div>
-              <CardHeader>
-                <CardTitle className="text-xl">{program.name}</CardTitle>
-                <p className="text-sm text-gray-500">{program.date}</p>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 mb-4">{program.description}</p>
-                <Button variant="outline" className="w-full">
-                  Learn More
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {isLoadingPrograms ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-700"></div>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {programs.map((program) => (
+              <Card key={program.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="aspect-video relative">
+                  <Image src={program.image || "/placeholder.svg"} alt={program.name} fill className="object-cover" />
+                </div>
+                <CardHeader>
+                  <CardTitle className="text-xl">{program.name}</CardTitle>
+                  <p className="text-sm text-gray-500">{program.date}</p>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 mb-4">{program.description}</p>
+                  <Button variant="outline" className="w-full">
+                    Learn More
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Great Memories Section */}
@@ -834,37 +890,43 @@ export default function Home() {
           <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {blogs.map((blog) => (
-            <Card key={blog.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video relative">
-                <Image src={blog.image || "/placeholder.svg"} alt={blog.title} fill className="object-cover" />
-              </div>
-              <CardHeader>
-                <div className="flex gap-2 mb-2">
-                  {blog.categories.map((category) => (
-                    <Badge key={category} variant="outline">
-                      {category}
-                    </Badge>
-                  ))}
+        {isLoadingBlogs ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-700"></div>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6">
+            {blogs.map((blog) => (
+              <Card key={blog.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="aspect-video relative">
+                  <Image src={blog.image || "/placeholder.svg"} alt={blog.title} fill className="object-cover" />
                 </div>
-                <CardTitle className="text-xl">{blog.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 mb-4">{blog.excerpt}</p>
-              </CardContent>
-              <CardFooter className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-                  <span className="text-sm">{blog.author}</span>
-                </div>
-                <Button variant="outline" size="sm">
-                  Read More
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+                <CardHeader>
+                  <div className="flex gap-2 mb-2">
+                    {blog.categories.map((category) => (
+                      <Badge key={category} variant="outline">
+                        {category}
+                      </Badge>
+                    ))}
+                  </div>
+                  <CardTitle className="text-xl">{blog.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 mb-4">{blog.excerpt}</p>
+                </CardContent>
+                <CardFooter className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
+                    <span className="text-sm">{blog.author}</span>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    Read More
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Contact Section */}
@@ -1121,17 +1183,11 @@ export default function Home() {
         </div>
       </section>
       <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} onLogin={handleLogin} />
-      <BlogManagementDialog
-        open={showBlogManagement}
-        onOpenChange={setShowBlogManagement}
-        blogs={blogs}
-        onUpdateBlogs={setBlogs}
-      />
+      <BlogManagementDialog open={showBlogManagement} onOpenChange={setShowBlogManagement} onBlogsChange={loadBlogs} />
       <EventManagementDialog
         open={showEventManagement}
         onOpenChange={setShowEventManagement}
-        events={programs}
-        onUpdateEvents={setPrograms}
+        onEventsChange={loadPrograms}
       />
     </div>
   )
