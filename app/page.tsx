@@ -1,5 +1,7 @@
 "use client"
 
+import { CardFooter } from "@/components/ui/card"
+
 import type React from "react"
 import type { ReactNode } from "react"
 import Image from "next/image"
@@ -72,10 +74,6 @@ const CardTitle = ({ children, className = "" }: { children: ReactNode; classNam
 )
 
 const CardContent = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <div className={`p-6 pt-0 ${className}`}>{children}</div>
-)
-
-const CardFooter = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
   <div className={`flex items-center p-6 pt-0 ${className}`}>{children}</div>
 )
 
@@ -612,7 +610,7 @@ export default function Home() {
                   variant="outline"
                   className="px-8 py-6 text-lg rounded-md"
                 >
-                  Contact Us
+                  Become a member
                 </Button>
               </div>
             </div>
@@ -799,22 +797,6 @@ export default function Home() {
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-8">Get in Touch</h3>
               <div className="space-y-6 mb-8">
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                        <Phone className="h-6 w-6 text-indigo-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">Phone</h4>
-                        <a href="tel:+7044548936" className="text-indigo-600 hover:text-indigo-800">
-                          +704-454-8936
-                        </a>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
                 <Card>
                   <CardContent className="p-6">
                     <div className="flex items-center gap-4">

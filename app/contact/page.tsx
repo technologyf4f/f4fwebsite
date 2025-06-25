@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { UserCircle, ArrowLeft, Phone, Mail, MapPin, Clock } from "lucide-react"
+import { UserCircle, ArrowLeft, Mail } from "lucide-react"
 
 export default function ContactPage() {
   return (
@@ -85,22 +85,6 @@ export default function ContactPage() {
                 <Card>
                   <CardContent className="p-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                        <Phone className="h-6 w-6 text-indigo-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">Phone</h3>
-                        <a href="tel:+7044548936" className="text-indigo-600 hover:text-indigo-800">
-                          +704-454-8936
-                        </a>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                         <Mail className="h-6 w-6 text-green-600" />
                       </div>
@@ -109,35 +93,6 @@ export default function ContactPage() {
                         <a href="mailto:framework4future@gmail.com" className="text-green-600 hover:text-green-800">
                           framework4future@gmail.com
                         </a>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                        <MapPin className="h-6 w-6 text-red-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">Location</h3>
-                        <p className="text-gray-600">255 Old Post Road</p>
-                        <p className="text-gray-600">Waxhaw, NC 28173</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <Clock className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">Office Hours</h3>
-                        <p className="text-gray-600">Monday - Friday: 9:00 AM - 5:00 PM</p>
                       </div>
                     </div>
                   </CardContent>
