@@ -283,7 +283,9 @@ export default function Home() {
   // Fixed click outside handler
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (showAdminMenu) {
+      const target = event.target as Element
+      // Only close if clicking outside the admin menu area
+      if (showAdminMenu && !target.closest(".admin-menu-container")) {
         setShowAdminMenu(false)
       }
     }
@@ -297,6 +299,7 @@ export default function Home() {
     }
   }, [showAdminMenu])
 
+  // Replace the loadPrograms function:
   const loadPrograms = async () => {
     setIsLoadingPrograms(true)
     try {
@@ -309,6 +312,7 @@ export default function Home() {
     }
   }
 
+  // Replace the loadBlogs function:
   const loadBlogs = async () => {
     setIsLoadingBlogs(true)
     try {
@@ -357,6 +361,19 @@ export default function Home() {
 
   const handleManageEvents = () => {
     setShowEventManagement(true)
+  }
+
+  const formatDateForDisplay = (dateString: string) => {
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    } catch {
+      return dateString
+    }
   }
 
   return (
@@ -455,7 +472,7 @@ export default function Home() {
                 Donate
               </Button>
               {isLoggedIn ? (
-                <div className="relative">
+                <div className="relative admin-menu-container">
                   <Button
                     variant="ghost"
                     className="flex items-center gap-2 rounded-full h-8 px-3"
@@ -480,7 +497,11 @@ export default function Home() {
                       </div>
                       <div className="py-1">
                         <button
-                          onClick={handleManageBlogs}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setShowAdminMenu(false)
+                            handleManageBlogs()
+                          }}
                           className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -494,7 +515,11 @@ export default function Home() {
                           <span>Manage Blogs</span>
                         </button>
                         <button
-                          onClick={handleManageEvents}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setShowAdminMenu(false)
+                            handleManageEvents()
+                          }}
                           className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -510,7 +535,11 @@ export default function Home() {
                       </div>
                       <div className="border-t border-gray-100">
                         <button
-                          onClick={handleLogout}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setShowAdminMenu(false)
+                            handleLogout()
+                          }}
                           className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                         >
                           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -518,7 +547,7 @@ export default function Home() {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth={2}
-                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013 3v1"
                             />
                           </svg>
                           <span>Sign Out</span>
@@ -701,7 +730,7 @@ export default function Home() {
                 </div>
                 <CardHeader>
                   <CardTitle className="text-xl">{program.name}</CardTitle>
-                  <p className="text-sm text-gray-500">{program.date}</p>
+                  <p className="text-sm text-gray-500">{formatDateForDisplay(program.date)}</p>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600 mb-4">{program.description}</p>
@@ -735,17 +764,11 @@ export default function Home() {
                   <Image src={blog.image || "/placeholder.svg"} alt={blog.title} fill className="object-cover" />
                 </div>
                 <CardHeader>
-                  <div className="flex gap-2 mb-2">
-                    {blog.categories.map((category) => (
-                      <Badge key={category} variant="outline">
-                        {category}
-                      </Badge>
-                    ))}
-                  </div>
                   <CardTitle className="text-xl">{blog.title}</CardTitle>
+                  <p className="text-sm text-gray-500">{formatDateForDisplay(blog.date)}</p>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">{blog.excerpt}</p>
+                  <p className="text-gray-600 mb-4">{blog.content.substring(0, 150)}...</p>
                 </CardContent>
                 <CardFooter className="flex justify-between items-center">
                   <div className="flex items-center gap-2">

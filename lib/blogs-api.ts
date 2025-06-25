@@ -1,129 +1,146 @@
 import { supabase, isSupabaseConfigured, type Blog } from "./supabase"
 
-// Fallback data when Supabase is not available
+/* ------------ LOCAL FALLBACK (when Supabase unavailable) ------------- */
 const fallbackBlogs: Blog[] = [
   {
     id: "1",
     title: "Youth Leadership in the Digital Age",
-    excerpt: "Exploring how young leaders are leveraging technology to create positive change in their communities.",
     image: "/placeholder.svg?height=300&width=400&text=Digital+Leadership",
-    date: "June 2, 2024",
+    date: "2024-06-02",
     author: "Maria Rodriguez",
-    reading_time: "5 min read",
-    categories: ["Leadership", "Technology"],
-    featured: true,
-    content:
-      "In today's rapidly evolving digital landscape, young leaders are finding innovative ways to create positive change in their communities. From social media campaigns to digital organizing platforms, technology has become an essential tool for modern youth leadership.",
-  },
-  {
-    id: "2",
-    title: "Building Inclusive Communities Through Service",
-    excerpt: "How community service projects are bringing diverse groups together to solve local challenges.",
-    image: "/placeholder.svg?height=300&width=400&text=Inclusive+Communities",
-    date: "May 15, 2024",
-    author: "James Washington",
-    reading_time: "7 min read",
-    categories: ["Community", "Inclusion"],
-    featured: false,
-    content:
-      "Community service has always been at the heart of the Framework 4 Future mission, but we've learned that true impact comes from creating inclusive spaces where all young people can contribute their unique perspectives and talents.",
+    content: "In today's rapidly evolving digital landscape, young leaders are finding innovative ways ...",
   },
 ]
-
-// In-memory storage for when Supabase is not configured
 let localBlogs: Blog[] = [...fallbackBlogs]
 
+/* ---------------------- IMAGE UPLOAD (helper) ------------------------ */
+async function uploadImageViaApi(file: File): Promise<string> {
+  const body = new FormData()
+  body.append("file", file)
+
+  const res = await fetch("/api/upload-image", { method: "POST", body })
+  if (!res.ok) {
+    console.error("Upload API failed:", await res.text())
+    throw new Error("Failed to upload image")
+  }
+  const { url } = (await res.json()) as { url: string }
+  return url
+}
+
+/* ------------------------- CRUD METHODS ------------------------------ */
 export async function getBlogs(): Promise<Blog[]> {
-  if (!isSupabaseConfigured()) {
-    console.warn("Supabase not configured, using local storage")
+  if (!isSupabaseConfigured()) return localBlogs
+
+  try {
+    const { data, error } = await supabase!
+      .from("blogs")
+      .select("id, title, content, author, date, image, created_at")
+      .order("created_at", { ascending: false })
+    if (error) throw error
+    return data ?? []
+  } catch (err) {
+    console.error("Supabase getBlogs error:", err)
     return localBlogs
   }
-
-  const { data, error } = await supabase!.from("blogs").select("*").order("created_at", { ascending: false })
-
-  if (error) {
-    console.error("Error fetching blogs:", error)
-    console.warn("Falling back to local storage")
-    return localBlogs
-  }
-
-  return data || []
 }
 
-export async function createBlog(blog: Omit<Blog, "id" | "created_at" | "updated_at">): Promise<Blog> {
+export async function createBlog(blog: Omit<Blog, "id" | "created_at" | "image">, imageFile?: File): Promise<Blog> {
+  // ── handle local fallback ──
   if (!isSupabaseConfigured()) {
-    console.warn("Supabase not configured, using local storage")
-    const newBlog: Blog = {
+    const local: Blog = {
       ...blog,
+      image: imageFile
+        ? URL.createObjectURL(imageFile)
+        : `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(blog.title)}`,
       id: Date.now().toString(),
       created_at: new Date().toISOString(),
     }
-    localBlogs = [newBlog, ...localBlogs]
-    return newBlog
+    localBlogs = [local, ...localBlogs]
+    return local
   }
 
-  const { data, error } = await supabase!.from("blogs").insert([blog]).select().single()
+  try {
+    // 1) upload image (if provided)
+    const imageUrl = imageFile
+      ? await uploadImageViaApi(imageFile)
+      : `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(blog.title)}`
 
-  if (error) {
-    console.error("Error creating blog:", error)
-    // Fallback to local storage
-    const newBlog: Blog = {
+    // 2) insert blog
+    const { data, error } = await supabase!
+      .from("blogs")
+      .insert([{ ...blog, image: imageUrl }])
+      .select("id, title, content, author, date, image, created_at")
+      .single()
+
+    if (error) throw error
+    return data
+  } catch (err) {
+    console.error("Supabase createBlog error:", err)
+    // graceful fallback to local storage
+    const local: Blog = {
       ...blog,
+      image: imageFile
+        ? URL.createObjectURL(imageFile)
+        : `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(blog.title)}`,
       id: Date.now().toString(),
       created_at: new Date().toISOString(),
     }
-    localBlogs = [newBlog, ...localBlogs]
-    return newBlog
+    localBlogs = [local, ...localBlogs]
+    return local
   }
-
-  return data
 }
 
-export async function updateBlog(id: string, blog: Partial<Blog>): Promise<Blog> {
+export async function updateBlog(id: string, partial: Partial<Blog>, imageFile?: File): Promise<Blog> {
   if (!isSupabaseConfigured()) {
-    console.warn("Supabase not configured, using local storage")
-    const index = localBlogs.findIndex((b) => b.id === id)
-    if (index !== -1) {
-      localBlogs[index] = { ...localBlogs[index], ...blog, updated_at: new Date().toISOString() }
-      return localBlogs[index]
+    // local mode
+    const idx = localBlogs.findIndex((b) => b.id === id)
+    if (idx === -1) throw new Error("Blog not found")
+    localBlogs[idx] = {
+      ...localBlogs[idx],
+      ...partial,
+      image: imageFile ? URL.createObjectURL(imageFile) : localBlogs[idx].image,
     }
-    throw new Error("Blog not found")
+    return localBlogs[idx]
   }
 
-  const { data, error } = await supabase!
-    .from("blogs")
-    .update({ ...blog, updated_at: new Date().toISOString() })
-    .eq("id", id)
-    .select()
-    .single()
-
-  if (error) {
-    console.error("Error updating blog:", error)
-    // Fallback to local storage
-    const index = localBlogs.findIndex((b) => b.id === id)
-    if (index !== -1) {
-      localBlogs[index] = { ...localBlogs[index], ...blog, updated_at: new Date().toISOString() }
-      return localBlogs[index]
+  try {
+    // upload replacement image if needed
+    const updateData = { ...partial } as Partial<Blog>
+    if (imageFile) {
+      updateData.image = await uploadImageViaApi(imageFile)
     }
-    throw error
+    const { data, error } = await supabase!
+      .from("blogs")
+      .update(updateData)
+      .eq("id", id)
+      .select("id, title, content, author, date, image, created_at")
+      .single()
+    if (error) throw error
+    return data
+  } catch (err) {
+    console.error("Supabase updateBlog error:", err)
+    // fallback local
+    const idx = localBlogs.findIndex((b) => b.id === id)
+    if (idx === -1) throw err
+    localBlogs[idx] = {
+      ...localBlogs[idx],
+      ...partial,
+      image: imageFile ? URL.createObjectURL(imageFile) : localBlogs[idx].image,
+    }
+    return localBlogs[idx]
   }
-
-  return data
 }
 
 export async function deleteBlog(id: string): Promise<void> {
   if (!isSupabaseConfigured()) {
-    console.warn("Supabase not configured, using local storage")
     localBlogs = localBlogs.filter((b) => b.id !== id)
     return
   }
-
-  const { error } = await supabase!.from("blogs").delete().eq("id", id)
-
-  if (error) {
-    console.error("Error deleting blog:", error)
-    // Fallback to local storage
+  try {
+    const { error } = await supabase!.from("blogs").delete().eq("id", id)
+    if (error) throw error
+  } catch (err) {
+    console.error("Supabase deleteBlog error:", err)
     localBlogs = localBlogs.filter((b) => b.id !== id)
-    return
   }
 }

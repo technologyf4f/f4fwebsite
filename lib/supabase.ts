@@ -45,13 +45,8 @@ export interface Blog {
   id: string
   title: string
   content: string
-  excerpt: string
-  image: string
-  date: string
   author: string
-  reading_time: string
-  categories: string[]
-  featured: boolean
+  date: string
+  image: string
   created_at?: string
-  updated_at?: string
 }

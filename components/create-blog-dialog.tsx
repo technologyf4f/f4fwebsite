@@ -15,36 +15,28 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Upload, X, Plus } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { Upload, X, Calendar } from "lucide-react"
 
 interface CreateBlogDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onCreateBlog: (blog: {
-    title: string
-    content: string
-    excerpt: string
-    image: string
-    date: string
-    author: string
-    readingTime: string
-    categories: string[]
-    featured: boolean
-  }) => void
+  onCreateBlog: (
+    blog: {
+      title: string
+      content: string
+      date: string
+      author: string
+    },
+    imageFile?: File,
+  ) => void
 }
 
 export function CreateBlogDialog({ open, onOpenChange, onCreateBlog }: CreateBlogDialogProps) {
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
-  const [excerpt, setExcerpt] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
+  const [date, setDate] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [author, setAuthor] = useState("")
-  const [featured, setFeatured] = useState(false)
-  const [newCategory, setNewCategory] = useState("")
-  const [categories, setCategories] = useState<string[]>([])
   const [password, setPassword] = useState("")
   const [passwordError, setPasswordError] = useState(false)
 
@@ -57,50 +49,26 @@ export function CreateBlogDialog({ open, onOpenChange, onCreateBlog }: CreateBlo
       return
     }
 
-    if (!title.trim() || !content.trim() || !author.trim()) {
+    if (!title.trim() || !content.trim() || !author.trim() || !date.trim()) {
       return
     }
 
-    // Calculate reading time (rough estimate: 200 words per minute)
-    const wordCount = content.trim().split(/\s+/).length
-    const readingTime = Math.max(1, Math.ceil(wordCount / 200)) + " min read"
-
-    // Use current date
-    const date = new Date().toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-
-    const finalImageUrl = imageFile
-      ? URL.createObjectURL(imageFile)
-      : imageUrl || `/placeholder.svg?height=300&width=400&query=${encodeURIComponent(title)}`
-
-    // Use excerpt or generate from content
-    const finalExcerpt = excerpt.trim() || content.trim().substring(0, 150) + "..."
-
-    onCreateBlog({
-      title: title.trim(),
-      content: content.trim(),
-      excerpt: finalExcerpt,
-      image: finalImageUrl,
-      date,
-      author: author.trim(),
-      readingTime,
-      categories,
-      featured,
-    })
+    onCreateBlog(
+      {
+        title: title.trim(),
+        content: content.trim(),
+        date: date.trim(),
+        author: author.trim(),
+      },
+      imageFile || undefined,
+    )
 
     // Reset form
     setTitle("")
     setContent("")
-    setExcerpt("")
-    setImageUrl("")
+    setDate("")
     setImageFile(null)
     setAuthor("")
-    setFeatured(false)
-    setCategories([])
-    setNewCategory("")
     setPassword("")
     setPasswordError(false)
   }
@@ -109,24 +77,11 @@ export function CreateBlogDialog({ open, onOpenChange, onCreateBlog }: CreateBlo
     const file = e.target.files?.[0]
     if (file) {
       setImageFile(file)
-      setImageUrl("") // Clear URL if file is selected
     }
   }
 
   const removeImage = () => {
     setImageFile(null)
-    setImageUrl("")
-  }
-
-  const addCategory = () => {
-    if (newCategory.trim() && !categories.includes(newCategory.trim())) {
-      setCategories([...categories, newCategory.trim()])
-      setNewCategory("")
-    }
-  }
-
-  const removeCategory = (category: string) => {
-    setCategories(categories.filter((c) => c !== category))
   }
 
   return (
@@ -162,14 +117,18 @@ export function CreateBlogDialog({ open, onOpenChange, onCreateBlog }: CreateBlo
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="excerpt">Excerpt (Optional)</Label>
-              <Textarea
-                id="excerpt"
-                value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value)}
-                placeholder="A brief summary of your post (will be generated from content if left empty)"
-                rows={2}
-              />
+              <Label htmlFor="date">Publication Date</Label>
+              <div className="relative">
+                <Input
+                  id="date"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  required
+                  className="pl-10"
+                />
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              </div>
             </div>
 
             <div className="grid gap-2">
@@ -201,64 +160,8 @@ export function CreateBlogDialog({ open, onOpenChange, onCreateBlog }: CreateBlo
             </div>
 
             <div className="grid gap-2">
-              <Label>Categories</Label>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {categories.map((category) => (
-                  <Badge key={category} variant="secondary" className="flex items-center gap-1">
-                    {category}
-                    <button
-                      type="button"
-                      onClick={() => removeCategory(category)}
-                      className="ml-1 rounded-full hover:bg-gray-200 p-1"
-                    >
-                      <X className="h-3 w-3" />
-                      <span className="sr-only">Remove {category}</span>
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  placeholder="Add a category"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault()
-                      addCategory()
-                    }
-                  }}
-                />
-                <Button type="button" variant="outline" onClick={addCategory}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Checkbox id="featured" checked={featured} onCheckedChange={(checked) => setFeatured(!!checked)} />
-              <Label htmlFor="featured" className="cursor-pointer">
-                Feature this post
-              </Label>
-            </div>
-
-            <div className="grid gap-2">
               <Label>Blog Image</Label>
               <div className="space-y-2">
-                {!imageFile && (
-                  <div>
-                    <Label htmlFor="imageUrl" className="text-sm text-gray-600">
-                      Image URL (optional)
-                    </Label>
-                    <Input
-                      id="imageUrl"
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
-                      placeholder="https://example.com/image.jpg"
-                    />
-                  </div>
-                )}
-
                 <div className="flex items-center gap-2">
                   <Label htmlFor="imageFile" className="cursor-pointer">
                     <div className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
@@ -267,7 +170,7 @@ export function CreateBlogDialog({ open, onOpenChange, onCreateBlog }: CreateBlo
                     </div>
                   </Label>
                   <Input id="imageFile" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                  {(imageFile || imageUrl) && (
+                  {imageFile && (
                     <Button type="button" variant="outline" size="sm" onClick={removeImage}>
                       <X className="h-4 w-4" />
                     </Button>

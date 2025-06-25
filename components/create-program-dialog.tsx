@@ -1,6 +1,6 @@
 "use client"
 
-import type { React } from "react"
+import type React from "react"
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -15,24 +15,25 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Upload, X } from "lucide-react"
+import { Upload, X, Calendar } from "lucide-react"
 
 interface CreateProgramDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onCreateProgram: (program: {
-    name: string
-    description: string
-    image: string
-    date: string
-  }) => void
+  onCreateProgram: (
+    program: {
+      name: string
+      description: string
+      date: string
+    },
+    imageFile?: File,
+  ) => void
 }
 
 export function CreateProgramDialog({ open, onOpenChange, onCreateProgram }: CreateProgramDialogProps) {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [date, setDate] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [password, setPassword] = useState("")
   const [passwordError, setPasswordError] = useState(false)
@@ -50,22 +51,19 @@ export function CreateProgramDialog({ open, onOpenChange, onCreateProgram }: Cre
       return
     }
 
-    const finalImageUrl = imageFile
-      ? URL.createObjectURL(imageFile)
-      : imageUrl || `/placeholder.svg?height=300&width=400&query=${encodeURIComponent(name)}`
-
-    onCreateProgram({
-      name: name.trim(),
-      description: description.trim(),
-      date: date.trim(),
-      image: finalImageUrl,
-    })
+    onCreateProgram(
+      {
+        name: name.trim(),
+        description: description.trim(),
+        date: date.trim(),
+      },
+      imageFile || undefined,
+    )
 
     // Reset form
     setName("")
     setDescription("")
     setDate("")
-    setImageUrl("")
     setImageFile(null)
     setPassword("")
     setPasswordError(false)
@@ -75,13 +73,11 @@ export function CreateProgramDialog({ open, onOpenChange, onCreateProgram }: Cre
     const file = e.target.files?.[0]
     if (file) {
       setImageFile(file)
-      setImageUrl("") // Clear URL if file is selected
     }
   }
 
   const removeImage = () => {
     setImageFile(null)
-    setImageUrl("")
   }
 
   return (
@@ -118,13 +114,17 @@ export function CreateProgramDialog({ open, onOpenChange, onCreateProgram }: Cre
 
             <div className="grid gap-2">
               <Label htmlFor="date">Date</Label>
-              <Input
-                id="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                placeholder="e.g., March 15, 2024 or Every Saturday"
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="date"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  required
+                  className="pl-10"
+                />
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              </div>
             </div>
 
             <div className="grid gap-2">
@@ -147,20 +147,6 @@ export function CreateProgramDialog({ open, onOpenChange, onCreateProgram }: Cre
             <div className="grid gap-2">
               <Label>Program Image</Label>
               <div className="space-y-2">
-                {!imageFile && (
-                  <div>
-                    <Label htmlFor="imageUrl" className="text-sm text-gray-600">
-                      Image URL (optional)
-                    </Label>
-                    <Input
-                      id="imageUrl"
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
-                      placeholder="https://example.com/image.jpg"
-                    />
-                  </div>
-                )}
-
                 <div className="flex items-center gap-2">
                   <Label htmlFor="imageFile" className="cursor-pointer">
                     <div className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
@@ -169,7 +155,7 @@ export function CreateProgramDialog({ open, onOpenChange, onCreateProgram }: Cre
                     </div>
                   </Label>
                   <Input id="imageFile" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                  {(imageFile || imageUrl) && (
+                  {imageFile && (
                     <Button type="button" variant="outline" size="sm" onClick={removeImage}>
                       <X className="h-4 w-4" />
                     </Button>

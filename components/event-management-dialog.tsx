@@ -1,5 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
+import type React from "react"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -13,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Edit, Trash2, Plus, Save, DeleteIcon as Cancel, Loader2 } from "lucide-react"
+import { Edit, Trash2, Plus, Save, DeleteIcon as Cancel, Loader2, Calendar, Upload, X } from "lucide-react"
 import { getEvents, createEvent, updateEvent, deleteEvent, type Event } from "@/lib/events-api"
 
 interface EventManagementDialogProps {
@@ -28,10 +30,10 @@ export function EventManagementDialog({ open, onOpenChange, onEventsChange }: Ev
   const [isCreating, setIsCreating] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [imageFile, setImageFile] = useState<File | null>(null)
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    image: "",
     date: "",
   })
 
@@ -59,9 +61,9 @@ export function EventManagementDialog({ open, onOpenChange, onEventsChange }: Ev
     setFormData({
       name: "",
       description: "",
-      image: "",
       date: "",
     })
+    setImageFile(null)
   }
 
   const handleCreate = () => {
@@ -75,10 +77,34 @@ export function EventManagementDialog({ open, onOpenChange, onEventsChange }: Ev
     setFormData({
       name: event.name,
       description: event.description,
-      image: event.image || "",
       date: event.date,
     })
+    setImageFile(null)
     setIsCreating(false)
+  }
+
+  const formatDateForDisplay = (dateString: string) => {
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    } catch {
+      return dateString
+    }
+  }
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+    }
+  }
+
+  const removeImage = () => {
+    setImageFile(null)
   }
 
   const handleSave = async () => {
@@ -89,21 +115,17 @@ export function EventManagementDialog({ open, onOpenChange, onEventsChange }: Ev
 
     setIsSaving(true)
     try {
-      const finalImage =
-        formData.image || `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(formData.name)}`
-
       const eventData = {
         name: formData.name.trim(),
         description: formData.description.trim(),
-        image: finalImage,
         date: formData.date.trim(),
       }
 
       if (isCreating) {
-        const newEvent = await createEvent(eventData)
+        const newEvent = await createEvent(eventData, imageFile || undefined)
         setEvents([newEvent, ...events])
       } else if (editingEvent) {
-        const updatedEvent = await updateEvent(editingEvent.id, eventData)
+        const updatedEvent = await updateEvent(editingEvent.id, eventData, imageFile || undefined)
         setEvents(events.map((event) => (event.id === editingEvent.id ? updatedEvent : event)))
       }
 
@@ -179,7 +201,7 @@ export function EventManagementDialog({ open, onOpenChange, onEventsChange }: Ev
                           <div className="flex-1">
                             <CardTitle className="text-lg">{event.name}</CardTitle>
                             <div className="text-sm text-gray-500 mt-2">
-                              <span>{event.date}</span>
+                              <span>{formatDateForDisplay(event.date)}</span>
                               {event.created_at && (
                                 <span className="ml-4">Created: {new Date(event.created_at).toLocaleDateString()}</span>
                               )}
@@ -226,15 +248,19 @@ export function EventManagementDialog({ open, onOpenChange, onEventsChange }: Ev
                 </div>
 
                 <div>
-                  <Label htmlFor="date">Date *</Label>
-                  <Input
-                    id="date"
-                    value={formData.date}
-                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    placeholder="e.g., March 15, 2024 or Every Saturday"
-                    required
-                    disabled={isSaving}
-                  />
+                  <Label htmlFor="date">Event Date *</Label>
+                  <div className="relative">
+                    <Input
+                      id="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                      required
+                      disabled={isSaving}
+                      className="pl-10"
+                    />
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
                 </div>
 
                 <div>
@@ -251,14 +277,32 @@ export function EventManagementDialog({ open, onOpenChange, onEventsChange }: Ev
                 </div>
 
                 <div>
-                  <Label htmlFor="image">Image URL (Optional)</Label>
-                  <Input
-                    id="image"
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    placeholder="https://example.com/image.jpg"
-                    disabled={isSaving}
-                  />
+                  <Label>Event Image</Label>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="imageFile" className="cursor-pointer">
+                        <div className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
+                          <Upload className="h-4 w-4" />
+                          <span className="text-sm">Upload Image</span>
+                        </div>
+                      </Label>
+                      <Input
+                        id="imageFile"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        disabled={isSaving}
+                      />
+                      {imageFile && (
+                        <Button type="button" variant="outline" size="sm" onClick={removeImage} disabled={isSaving}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+
+                    {imageFile && <p className="text-sm text-gray-600">Selected: {imageFile.name}</p>}
+                  </div>
                 </div>
               </div>
             </>

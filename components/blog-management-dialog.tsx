@@ -1,5 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
+import type React from "react"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -12,10 +14,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Edit, Trash2, Plus, X, Save, DeleteIcon as Cancel, Loader2 } from "lucide-react"
+import { Edit, Trash2, Plus, Save, DeleteIcon as Cancel, Loader2, Calendar, Upload, X } from "lucide-react"
 import { getBlogs, createBlog, updateBlog, deleteBlog, type Blog } from "@/lib/blogs-api"
 
 interface BlogManagementDialogProps {
@@ -30,16 +30,13 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
   const [isCreating, setIsCreating] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [imageFile, setImageFile] = useState<File | null>(null)
   const [formData, setFormData] = useState({
     title: "",
     content: "",
-    excerpt: "",
-    image: "",
+    date: "",
     author: "",
-    categories: [] as string[],
-    featured: false,
   })
-  const [newCategory, setNewCategory] = useState("")
 
   // Load blogs when dialog opens
   useEffect(() => {
@@ -65,13 +62,10 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
     setFormData({
       title: "",
       content: "",
-      excerpt: "",
-      image: "",
+      date: "",
       author: "",
-      categories: [],
-      featured: false,
     })
-    setNewCategory("")
+    setImageFile(null)
   }
 
   const handleCreate = () => {
@@ -85,52 +79,57 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
     setFormData({
       title: blog.title,
       content: blog.content,
-      excerpt: blog.excerpt || "",
-      image: blog.image || "",
+      date: blog.date || "",
       author: blog.author,
-      categories: [...blog.categories],
-      featured: blog.featured,
     })
+    setImageFile(null)
     setIsCreating(false)
   }
 
+  const formatDateForDisplay = (dateString: string) => {
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    } catch {
+      return dateString
+    }
+  }
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+    }
+  }
+
+  const removeImage = () => {
+    setImageFile(null)
+  }
+
   const handleSave = async () => {
-    if (!formData.title.trim() || !formData.content.trim() || !formData.author.trim()) {
+    if (!formData.title.trim() || !formData.content.trim() || !formData.author.trim() || !formData.date.trim()) {
       alert("Please fill in all required fields")
       return
     }
 
     setIsSaving(true)
     try {
-      const wordCount = formData.content.trim().split(/\s+/).length
-      const readingTime = Math.max(1, Math.ceil(wordCount / 200)) + " min read"
-      const date = new Date().toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-
-      const finalExcerpt = formData.excerpt.trim() || formData.content.trim().substring(0, 150) + "..."
-      const finalImage =
-        formData.image || `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(formData.title)}`
-
       const blogData = {
         title: formData.title.trim(),
         content: formData.content.trim(),
-        excerpt: finalExcerpt,
-        image: finalImage,
-        date,
+        date: formData.date.trim(),
         author: formData.author.trim(),
-        reading_time: readingTime,
-        categories: formData.categories,
-        featured: formData.featured,
       }
 
       if (isCreating) {
-        const newBlog = await createBlog(blogData)
+        const newBlog = await createBlog(blogData, imageFile || undefined)
         setBlogs([newBlog, ...blogs])
       } else if (editingBlog) {
-        const updatedBlog = await updateBlog(editingBlog.id, blogData)
+        const updatedBlog = await updateBlog(editingBlog.id, blogData, imageFile || undefined)
         setBlogs(blogs.map((blog) => (blog.id === editingBlog.id ? updatedBlog : blog)))
       }
 
@@ -165,23 +164,6 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
     setEditingBlog(null)
     setIsCreating(false)
     resetForm()
-  }
-
-  const addCategory = () => {
-    if (newCategory.trim() && !formData.categories.includes(newCategory.trim())) {
-      setFormData({
-        ...formData,
-        categories: [...formData.categories, newCategory.trim()],
-      })
-      setNewCategory("")
-    }
-  }
-
-  const removeCategory = (category: string) => {
-    setFormData({
-      ...formData,
-      categories: formData.categories.filter((c) => c !== category),
-    })
   }
 
   const isEditing = editingBlog || isCreating
@@ -224,9 +206,7 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
                             <CardTitle className="text-lg">{blog.title}</CardTitle>
                             <div className="flex items-center gap-4 text-sm text-gray-500 mt-2">
                               <span>By {blog.author}</span>
-                              <span>{blog.date}</span>
-                              <span>{blog.reading_time}</span>
-                              {blog.featured && <Badge variant="default">Featured</Badge>}
+                              <span>{formatDateForDisplay(blog.date)}</span>
                               {blog.created_at && (
                                 <span>Created: {new Date(blog.created_at).toLocaleDateString()}</span>
                               )}
@@ -243,14 +223,7 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
                         </div>
                       </CardHeader>
                       <CardContent className="pt-0">
-                        <p className="text-gray-600 text-sm mb-3">{blog.excerpt}</p>
-                        <div className="flex gap-2">
-                          {blog.categories.map((category) => (
-                            <Badge key={category} variant="outline">
-                              {category}
-                            </Badge>
-                          ))}
-                        </div>
+                        <p className="text-gray-600 text-sm mb-3">{blog.content.substring(0, 150)}...</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -292,6 +265,22 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
                 </div>
 
                 <div>
+                  <Label htmlFor="date">Publication Date *</Label>
+                  <div className="relative">
+                    <Input
+                      id="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                      required
+                      disabled={isSaving}
+                      className="pl-10"
+                    />
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+
+                <div>
                   <Label htmlFor="content">Content *</Label>
                   <Textarea
                     id="content"
@@ -305,74 +294,32 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
                 </div>
 
                 <div>
-                  <Label htmlFor="excerpt">Excerpt (Optional)</Label>
-                  <Textarea
-                    id="excerpt"
-                    value={formData.excerpt}
-                    onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                    placeholder="Brief summary (will be generated from content if empty)"
-                    rows={2}
-                    disabled={isSaving}
-                  />
-                </div>
+                  <Label>Blog Image</Label>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="imageFile" className="cursor-pointer">
+                        <div className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
+                          <Upload className="h-4 w-4" />
+                          <span className="text-sm">Upload Image</span>
+                        </div>
+                      </Label>
+                      <Input
+                        id="imageFile"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        disabled={isSaving}
+                      />
+                      {imageFile && (
+                        <Button type="button" variant="outline" size="sm" onClick={removeImage} disabled={isSaving}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
 
-                <div>
-                  <Label htmlFor="image">Image URL (Optional)</Label>
-                  <Input
-                    id="image"
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    placeholder="https://example.com/image.jpg"
-                    disabled={isSaving}
-                  />
-                </div>
-
-                <div>
-                  <Label>Categories</Label>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {formData.categories.map((category) => (
-                      <Badge key={category} variant="secondary" className="flex items-center gap-1">
-                        {category}
-                        <button
-                          type="button"
-                          onClick={() => removeCategory(category)}
-                          className="ml-1 rounded-full hover:bg-gray-200 p-1"
-                          disabled={isSaving}
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </Badge>
-                    ))}
+                    {imageFile && <p className="text-sm text-gray-600">Selected: {imageFile.name}</p>}
                   </div>
-                  <div className="flex gap-2">
-                    <Input
-                      value={newCategory}
-                      onChange={(e) => setNewCategory(e.target.value)}
-                      placeholder="Add a category"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault()
-                          addCategory()
-                        }
-                      }}
-                      disabled={isSaving}
-                    />
-                    <Button type="button" variant="outline" onClick={addCategory} disabled={isSaving}>
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="featured"
-                    checked={formData.featured}
-                    onCheckedChange={(checked) => setFormData({ ...formData, featured: !!checked })}
-                    disabled={isSaving}
-                  />
-                  <Label htmlFor="featured" className="cursor-pointer">
-                    Feature this post
-                  </Label>
                 </div>
               </div>
             </>
