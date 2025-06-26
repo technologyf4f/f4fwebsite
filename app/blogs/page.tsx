@@ -85,62 +85,15 @@ export default function BlogsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="border-b bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center">
-              <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-red-600 flex items-center justify-center rounded">
-                  <div className="w-6 h-6 border-2 border-white"></div>
-                </div>
-                <div className="text-sm font-bold text-gray-900">
-                  <div>FRAMEWORK</div>
-                  <div>4 FUTURE</div>
-                </div>
-              </div>
-            </Link>
-
-            <nav className="hidden lg:flex items-center space-x-8 ml-16">
-              <Link href="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                About Us
-              </Link>
-              <Link href="/programs" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                Programs
-              </Link>
-              <Link href="/blogs" className="text-blue-600 font-medium">
-                Blogs
-              </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                Contact Us
-              </Link>
-            </nav>
-
-            <div className="flex items-center gap-4">
-              <Button variant="default" className="hidden lg:inline-flex bg-green-600 hover:bg-green-700">
-                Donate
-              </Button>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <UserCircle className="h-6 w-6" />
-                <span className="sr-only">User account</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Header */}      
 
       {/* Blogs Header */}
       <section className="bg-white border-b">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" asChild>
-                <Link href="/">
-                  <ArrowLeft className="h-5 w-5" />
-                </Link>
-              </Button>
+            <div className="flex items-center gap-4">              
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Our Blog</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Our Blogs</h1>
                 <p className="text-gray-600 mt-2">Insights and stories from our youth leadership community</p>
               </div>
             </div>

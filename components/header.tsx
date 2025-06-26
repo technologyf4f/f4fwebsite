@@ -267,29 +267,29 @@ export function Header() {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={() => scrollToSection("events")}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg"
-              >
-                Events
-              </button>
-              <button
-                onClick={() => scrollToSection("blogs")}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg"
-              >
-                Blogs
-              </button>
-              <button
-                onClick={() => scrollToSection("contact-us")}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg"
-              >
-                Contact Us
-              </button>
+              <Link
+                      href="/events"
+                      className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg flex items-center gap-1"
+                    >
+                      Events
+              </Link>
+              <Link
+                      href="/blogs"
+                      className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg flex items-center gap-1"
+                    >
+                      Blogs
+              </Link>
+              <Link
+                      href="/contact"
+                      className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg flex items-center gap-1"
+                    >
+                      Contact Us
+              </Link>
             </nav>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1">            
               <Button
-                onClick={() => scrollToSection("donate")}
+                onClick={() =>  scrollToSection("donate")}
                 variant="default"
                 className="hidden lg:inline-flex bg-green-600 hover:bg-green-700 text-xs px-2 py-1 h-7"
               >

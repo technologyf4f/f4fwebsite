@@ -9,62 +9,10 @@ import { UserCircle, ArrowLeft, Mail } from "lucide-react"
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="border-b bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center">
-              <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-red-600 flex items-center justify-center rounded">
-                  <div className="w-6 h-6 border-2 border-white"></div>
-                </div>
-                <div className="text-sm font-bold text-gray-900">
-                  <div>FRAMEWORK</div>
-                  <div>4 FUTURE</div>
-                </div>
-              </div>
-            </Link>
-
-            <nav className="hidden lg:flex items-center ml-16">
-              <Link href="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-6">
-                About Us
-              </Link>
-              <Link href="/programs" className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-6">
-                Programs
-              </Link>
-              <Link href="/blogs" className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-6">
-                Blogs
-              </Link>
-              <Link href="/contact" className="text-blue-600 font-medium px-6">
-                Contact
-              </Link>
-              <Link href="/feedback" className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-6">
-                Feedback
-              </Link>
-            </nav>
-
-            <div className="flex items-center gap-4">
-              <Button asChild variant="default" className="hidden lg:inline-flex bg-green-600 hover:bg-green-700">
-                <Link href="/donate">Donate</Link>
-              </Button>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <UserCircle className="h-6 w-6" />
-                <span className="sr-only">User account</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Contact Header */}
+      
       <section className="bg-white border-b">
         <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/">
-                <ArrowLeft className="h-5 w-5" />
-              </Link>
-            </Button>
+          <div className="flex items-center gap-4">            
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Contact</h1>
               <p className="text-gray-600 mt-2">Get in touch with our team</p>
@@ -106,7 +54,7 @@ export default function ContactPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button asChild className="bg-indigo-700 hover:bg-indigo-800">
-                    <Link href="/programs">View Programs</Link>
+                    <Link href="/events">View Events</Link>
                   </Button>
                   <Button asChild variant="outline">
                     <Link href="/donate">Support Our Mission</Link>
