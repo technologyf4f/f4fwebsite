@@ -438,7 +438,7 @@ export default function Home() {
             <nav className="hidden lg:flex items-center ml-2">
               <div className="relative group">
                 <button
-                  onClick={() => scrollToSection("about")}
+                
                   className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg flex items-center gap-1"
                 >
                   About
@@ -459,12 +459,12 @@ export default function Home() {
                     >
                       Our Story
                     </Link>
-                    <button
-                      onClick={() => scrollToSection("about")}
+                    <Link
+                      href="/who-we-are"
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       Who We Are
-                    </button>
+                    </Link>
                     <button
                       onClick={() => scrollToSection("about")}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -683,7 +683,7 @@ export default function Home() {
       <section id="about" className="container mx-auto px-4 py-16 bg-gray-50">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">About Us</h2>
+            <h2 className="text-3xl font-bold mb-4">Founder's Message</h2>
             <p className="text-gray-600">Learn more about our mission and impact</p>
             <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
           </div>

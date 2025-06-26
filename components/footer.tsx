@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from "lucide-react"
+import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin, Youtube } from "lucide-react"
 
 export function Footer() {
   return (
@@ -18,21 +18,25 @@ export function Footer() {
               active service in the Carolinas.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a target="_blank" href="https://www.facebook.com/p/Framework-for-Future-100068639006501" className="text-gray-400 hover:text-white transition-colors">
                 <Facebook size={20} />
                 <span className="sr-only">Facebook</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a target="_blank" href="https://x.com/framework4futu1" className="text-gray-400 hover:text-white transition-colors">
                 <Twitter size={20} />
                 <span className="sr-only">Twitter</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a target="_blank" href="https://www.instagram.com/framework4future" className="text-gray-400 hover:text-white transition-colors">
                 <Instagram size={20} />
                 <span className="sr-only">Instagram</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a target="_blank" href="https://www.linkedin.com/in/framework-4future-0aa664178/" className="text-gray-400 hover:text-white transition-colors">
                 <Linkedin size={20} />
                 <span className="sr-only">LinkedIn</span>
+              </a>
+              <a target="_blank" href="https://www.youtube.com/@framework4futureadmin526" className="text-gray-400 hover:text-white transition-colors">
+                <Youtube size={20} />
+                <span className="sr-only">YouTube</span>
               </a>
             </div>
           </div>
@@ -121,18 +125,12 @@ export function Footer() {
               <div className="flex items-center space-x-3">
                 <Mail size={16} className="text-gray-400 flex-shrink-0" />
                 <a
-                  href="mailto:info@framework4future.org"
+                  href="mailto:framework4future@gmail.com"
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
-                  info@framework4future.org
+                  framework4future@gmail.com
                 </a>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Phone size={16} className="text-gray-400 flex-shrink-0" />
-                <a href="tel:+1234567890" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  (123) 456-7890
-                </a>
-              </div>
+              </div>              
             </div>
           </div>
         </div>
