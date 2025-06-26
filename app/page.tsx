@@ -603,15 +603,8 @@ export default function Home() {
                   onClick={() => scrollToSection("events")}
                   className="bg-indigo-700 hover:bg-indigo-800 text-white px-8 py-6 text-lg rounded-md"
                 >
-                  View Events
-                </Button>
-                <Button
-                  onClick={() => scrollToSection("contact-us")}
-                  variant="outline"
-                  className="px-8 py-6 text-lg rounded-md"
-                >
                   Become a member
-                </Button>
+                </Button>              
               </div>
             </div>
 
@@ -812,21 +805,7 @@ export default function Home() {
                     </div>
                   </CardContent>
                 </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                        <MapPin className="h-6 w-6 text-red-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">Location</h4>
-                        <p className="text-gray-600">255 Old Post Road</p>
-                        <p className="text-gray-600">Waxhaw, NC 28173</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                
               </div>
             </div>
 
