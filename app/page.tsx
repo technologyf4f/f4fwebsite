@@ -1,14 +1,12 @@
 "use client"
 
-import { CardFooter } from "@/components/ui/card"
-
 import type React from "react"
 import type { ReactNode } from "react"
 import Image from "next/image"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
-import { getEvents, type Event } from "@/lib/events-api"
-import { getBlogs, type Blog } from "@/lib/blogs-api"
+import { EventsSection } from "@/components/events-section"
+import { BlogsSection } from "@/components/blogs-section"
 
 // Inline UI Components
 const Button = ({
@@ -29,18 +27,19 @@ const Button = ({
   [key: string]: any
 }) => {
   const baseClasses =
-    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background"
+    "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background shadow-sm hover:shadow-md"
 
   const variants = {
-    default: "bg-primary text-primary-foreground hover:bg-primary/90",
-    outline: "border border-input hover:bg-accent hover:text-accent-foreground",
-    ghost: "hover:bg-accent hover:text-accent-foreground",
+    default:
+      "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg",
+    outline: "border-2 border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-700 hover:text-indigo-700",
+    ghost: "hover:bg-gray-100 text-gray-700 hover:text-indigo-700",
   }
 
   const sizes = {
-    default: "h-10 py-2 px-4",
-    sm: "h-9 px-3 rounded-md",
-    lg: "h-11 px-8 rounded-md",
+    default: "h-11 py-3 px-6",
+    sm: "h-9 px-4 text-sm",
+    lg: "h-14 px-8 text-lg",
     icon: "h-10 w-10",
   }
 
@@ -57,31 +56,35 @@ const Button = ({
 }
 
 const Card = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <div className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`}>{children}</div>
+  <div
+    className={`rounded-2xl border border-gray-100 bg-white text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 ${className}`}
+  >
+    {children}
+  </div>
 )
 
 const CardHeader = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <div className={`flex flex-col space-y-1.5 p-6 ${className}`}>{children}</div>
+  <div className={`flex flex-col space-y-2 p-8 ${className}`}>{children}</div>
 )
 
 const CardTitle = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <h3 className={`text-2xl font-semibold leading-none tracking-tight ${className}`}>{children}</h3>
+  <h3 className={`text-2xl font-bold leading-tight tracking-tight text-gray-900 ${className}`}>{children}</h3>
 )
 
 const CardContent = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <div className={`flex items-center p-6 pt-0 ${className}`}>{children}</div>
+  <div className={`p-8 pt-0 ${className}`}>{children}</div>
 )
 
 const Input = ({ className = "", ...props }: { className?: string; [key: string]: any }) => (
   <input
-    className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+    className={`flex h-12 w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:border-indigo-300 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 ${className}`}
     {...props}
   />
 )
 
 const Textarea = ({ className = "", ...props }: { className?: string; [key: string]: any }) => (
   <textarea
-    className={`flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+    className={`flex min-h-[120px] w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-sm ring-offset-background placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:border-indigo-300 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 ${className}`}
     {...props}
   />
 )
@@ -93,7 +96,7 @@ const Label = ({
 }: { children: ReactNode; htmlFor?: string; className?: string }) => (
   <label
     htmlFor={htmlFor}
-    className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className}`}
+    className={`text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700 ${className}`}
   >
     {children}
   </label>
@@ -147,11 +150,6 @@ const Mail = ({ className = "" }: { className?: string }) => (
 // Main Component
 export default function Home() {
   // State Management
-  const [programs, setPrograms] = useState<Event[]>([])
-  const [blogs, setBlogs] = useState<Blog[]>([])
-  const [isLoadingPrograms, setIsLoadingPrograms] = useState(true)
-  const [isLoadingBlogs, setIsLoadingBlogs] = useState(true)
-
   const [donations] = useState([
     {
       id: "1",
@@ -183,38 +181,6 @@ export default function Home() {
     reason: "",
   })
 
-  // Load data from Supabase on component mount
-  useEffect(() => {
-    loadPrograms()
-    loadBlogs()
-  }, [])
-
-  // Replace the loadPrograms function:
-  const loadPrograms = async () => {
-    setIsLoadingPrograms(true)
-    try {
-      const eventsData = await getEvents()
-      setPrograms(eventsData)
-    } catch (error) {
-      console.error("Failed to load events:", error)
-    } finally {
-      setIsLoadingPrograms(false)
-    }
-  }
-
-  // Replace the loadBlogs function:
-  const loadBlogs = async () => {
-    setIsLoadingBlogs(true)
-    try {
-      const blogsData = await getBlogs()
-      setBlogs(blogsData)
-    } catch (error) {
-      console.error("Failed to load blogs:", error)
-    } finally {
-      setIsLoadingBlogs(false)
-    }
-  }
-
   const totalDonations = donations.reduce((sum, donation) => sum + donation.amount, 0)
 
   const scrollToSection = (sectionId: string) => {
@@ -235,57 +201,45 @@ export default function Home() {
     setDonationForm({ name: "", amount: "", reason: "" })
   }
 
-  const formatDateForDisplay = (dateString: string) => {
-    try {
-      const date = new Date(dateString)
-      return date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    } catch {
-      return dateString
-    }
-  }
-
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50">
       {/* Hero Section */}
-      <section id="home" className="relative min-h-screen">
+      <section id="home" className="relative min-h-screen overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="grid grid-cols-4 h-full">
-            <div className="bg-red-600"></div>
-            <div className="bg-green-400"></div>
-            <div className="bg-orange-400"></div>
-            <div className="bg-blue-500"></div>
+            <div className="bg-gradient-to-br from-red-500 to-red-600"></div>
+            <div className="bg-gradient-to-br from-green-400 to-emerald-500"></div>
+            <div className="bg-gradient-to-br from-orange-400 to-amber-500"></div>
+            <div className="bg-gradient-to-br from-blue-500 to-indigo-600"></div>
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="bg-white/95 p-6 md:p-8 rounded-lg shadow-lg">
-              <p className="text-gray-700 mb-6 leading-relaxed">
+        <div className="container mx-auto px-6 py-20 md:py-32 relative z-10">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="bg-white/95 backdrop-blur-sm p-8 md:p-12 rounded-3xl shadow-2xl border border-white/20">
+              <p className="text-gray-600 mb-8 leading-relaxed text-lg">
                 We help develop next generation of youth leaders through intentional and impactful collaboration, civic
                 engagement and service projects at the local, regional and national level, while creating pathways for
                 leadership development.
               </p>
 
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-8">
+              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-10 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 Helping youth lead community engagement in the Carolinas.
               </h1>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-6">
                 <Button
                   onClick={() => scrollToSection("events")}
-                  className="bg-indigo-700 hover:bg-indigo-800 text-white px-8 py-6 text-lg rounded-md"
+                  size="lg"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-xl hover:shadow-2xl transform hover:scale-105"
                 >
                   Become a member
                 </Button>
               </div>
             </div>
 
-            <div className="hidden md:grid grid-cols-2 gap-4">
-              <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden relative">
+            <div className="hidden md:grid grid-cols-2 gap-6">
+              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden relative shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                 <Image
                   src="/placeholder.svg?height=300&width=300&text=Youth+Leaders"
                   alt="Youth leaders"
@@ -293,7 +247,7 @@ export default function Home() {
                   className="object-cover"
                 />
               </div>
-              <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden relative">
+              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden relative shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                 <Image
                   src="/placeholder.svg?height=300&width=300&text=Community+Service"
                   alt="Community service"
@@ -301,7 +255,7 @@ export default function Home() {
                   className="object-cover"
                 />
               </div>
-              <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden relative">
+              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden relative shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                 <Image
                   src="/placeholder.svg?height=300&width=300&text=Leadership+Workshop"
                   alt="Leadership workshop"
@@ -309,7 +263,7 @@ export default function Home() {
                   className="object-cover"
                 />
               </div>
-              <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden relative">
+              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden relative shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                 <Image
                   src="/placeholder.svg?height=300&width=300&text=Civic+Engagement"
                   alt="Civic engagement"
@@ -323,18 +277,20 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="container mx-auto px-4 py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Founder's Message</h2>
-            <p className="text-gray-600">Learn more about our mission and impact</p>
-            <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
+      <section id="about" className="container mx-auto px-6 py-20 bg-gradient-to-br from-gray-50 to-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Founder's Message
+            </h2>
+            <p className="text-gray-600 text-lg">Learn more about our mission and impact</p>
+            <div className="h-1 w-32 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto mt-8 rounded-full"></div>
           </div>
 
           {/* Mission Statement */}
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Our Mission</h3>
-            <p className="text-lg text-gray-700 leading-relaxed">
+          <div className="bg-white rounded-3xl shadow-xl p-10 mb-16 border border-gray-100">
+            <h3 className="text-3xl font-bold text-gray-900 mb-8">Our Mission</h3>
+            <p className="text-xl text-gray-700 leading-relaxed">
               We help develop next generation of youth leaders through intentional and impactful collaboration, civic
               engagement and service projects at the local, regional and national level, while creating pathways for
               leadership development.
@@ -342,9 +298,9 @@ export default function Home() {
           </div>
 
           {/* Video Section */}
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Watch Our Story</h3>
-            <div className="aspect-video w-full rounded-lg overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-xl p-10 mb-16 border border-gray-100">
+            <h3 className="text-3xl font-bold text-gray-900 mb-8">Watch Our Story</h3>
+            <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-lg">
               <iframe
                 src="https://www.youtube.com/embed/j_o_OkOQBeo"
                 title="Framework 4 Future Video"
@@ -356,125 +312,64 @@ export default function Home() {
           </div>
 
           {/* Impact Stats */}
-          <div className="bg-indigo-700 text-white rounded-lg shadow-lg p-8">
-            <h3 className="text-2xl font-bold mb-6 text-center">Our Impact</h3>
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div>
-                <div className="text-4xl font-bold mb-2">500+</div>
-                <div className="text-indigo-200">Youth Leaders Trained</div>
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-3xl shadow-xl p-10">
+            <h3 className="text-3xl font-bold mb-10 text-center">Our Impact</h3>
+            <div className="grid md:grid-cols-3 gap-10 text-center">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <div className="text-5xl font-bold mb-3">500+</div>
+                <div className="text-indigo-100 text-lg">Youth Leaders Trained</div>
               </div>
-              <div>
-                <div className="text-4xl font-bold mb-2">50+</div>
-                <div className="text-indigo-200">Community Projects</div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <div className="text-5xl font-bold mb-3">50+</div>
+                <div className="text-indigo-100 text-lg">Community Projects</div>
               </div>
-              <div>
-                <div className="text-4xl font-bold mb-2">25+</div>
-                <div className="text-indigo-200">Partner Organizations</div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <div className="text-5xl font-bold mb-3">25+</div>
+                <div className="text-indigo-100 text-lg">Partner Organizations</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Programs Section */}
-      <section id="events" className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Our Events</h2>
-          <p className="text-gray-600">Empowering youth through leadership and community engagement events</p>
-          <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
-        </div>
-
-        {isLoadingPrograms ? (
-          <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-700"></div>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {programs.map((program) => (
-              <Card key={program.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="aspect-video relative">
-                  <Image src={program.image || "/placeholder.svg"} alt={program.name} fill className="object-cover" />
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-xl">{program.name}</CardTitle>
-                  <p className="text-sm text-gray-500">{formatDateForDisplay(program.date)}</p>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">{program.description}</p>
-                  <Button variant="outline" className="w-full">
-                    Learn More
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+      {/* Events Section */}
+      <section id="events" className="container mx-auto px-6 py-20">
+        <EventsSection limit={3} showMoreButton={true} />
       </section>
 
       {/* Blogs Section */}
-      <section id="blogs" className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Our Blog</h2>
-          <p className="text-gray-600">Insights and stories from our youth leadership community</p>
-          <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
-        </div>
-
-        {isLoadingBlogs ? (
-          <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-700"></div>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 gap-6">
-            {blogs.map((blog) => (
-              <Card key={blog.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="aspect-video relative">
-                  <Image src={blog.image || "/placeholder.svg"} alt={blog.title} fill className="object-cover" />
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-xl">{blog.title}</CardTitle>
-                  <p className="text-sm text-gray-500">{formatDateForDisplay(blog.date)}</p>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">{blog.content.substring(0, 150)}...</p>
-                </CardContent>
-                <CardFooter className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-                    <span className="text-sm">{blog.author}</span>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Read More
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        )}
+      <section id="blogs" className="container mx-auto px-6 py-20 bg-gradient-to-br from-gray-50 to-white">
+        <BlogsSection limit={3} showMoreButton={true} />
       </section>
 
       {/* Contact Section */}
-      <section id="contact-us" className="container mx-auto px-4 py-16 bg-gray-50">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Contact Us</h2>
-          <p className="text-gray-600">Get in touch with our team</p>
-          <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
+      <section id="contact-us" className="container mx-auto px-6 py-20">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            Contact Us
+          </h2>
+          <p className="text-gray-600 text-lg">Get in touch with our team</p>
+          <div className="h-1 w-32 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto mt-8 rounded-full"></div>
         </div>
 
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-16">
             {/* Contact Information */}
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-8">Get in Touch</h3>
-              <div className="space-y-6 mb-8">
+              <h3 className="text-3xl font-bold text-gray-900 mb-10">Get in Touch</h3>
+              <div className="space-y-8 mb-10">
                 <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <Mail className="h-6 w-6 text-green-600" />
+                  <CardContent className="p-8">
+                    <div className="flex items-center gap-6">
+                      <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
+                        <Mail className="h-8 w-8 text-white" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Email</h4>
-                        <a href="mailto:framework4future@gmail.com" className="text-green-600 hover:text-green-800">
+                        <h4 className="font-bold text-gray-900 text-lg mb-2">Email</h4>
+                        <a
+                          href="mailto:framework4future@gmail.com"
+                          className="text-indigo-600 hover:text-indigo-800 font-semibold transition-colors"
+                        >
                           framework4future@gmail.com
                         </a>
                       </div>
@@ -488,12 +383,12 @@ export default function Home() {
             <div>
               <Card>
                 <CardHeader>
-                  <CardTitle>Send us a Message</CardTitle>
+                  <CardTitle className="text-2xl">Send us a Message</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleContactSubmit} className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
                         <Label htmlFor="firstName">First Name</Label>
                         <Input
                           id="firstName"
@@ -503,7 +398,7 @@ export default function Home() {
                           required
                         />
                       </div>
-                      <div>
+                      <div className="space-y-2">
                         <Label htmlFor="lastName">Last Name</Label>
                         <Input
                           id="lastName"
@@ -514,7 +409,7 @@ export default function Home() {
                         />
                       </div>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
                       <Input
                         id="email"
@@ -525,7 +420,7 @@ export default function Home() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="subject">Subject</Label>
                       <Input
                         id="subject"
@@ -535,7 +430,7 @@ export default function Home() {
                         required
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="message">Message</Label>
                       <Textarea
                         id="message"
@@ -546,7 +441,7 @@ export default function Home() {
                         required
                       />
                     </div>
-                    <Button type="submit" className="w-full bg-indigo-700 hover:bg-indigo-800">
+                    <Button type="submit" className="w-full" size="lg">
                       Send Message
                     </Button>
                   </form>
@@ -558,48 +453,50 @@ export default function Home() {
       </section>
 
       {/* Donate Section */}
-      <section id="donate" className="container mx-auto px-4 py-16 bg-gray-50">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Support Our Mission</h2>
-          <p className="text-gray-600">Help us empower the next generation of leaders</p>
-          <div className="h-1 w-32 bg-indigo-700 mx-auto mt-6 rounded-full"></div>
+      <section id="donate" className="container mx-auto px-6 py-20 bg-gradient-to-br from-gray-50 to-white">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            Support Our Mission
+          </h2>
+          <p className="text-gray-600 text-lg">Help us empower the next generation of leaders</p>
+          <div className="h-1 w-32 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto mt-8 rounded-full"></div>
         </div>
 
         {/* Impact Stats */}
-        <div className="bg-indigo-700 text-white rounded-lg shadow-lg p-8 mb-12">
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div className="flex flex-col items-center">
-              <Heart className="h-12 w-12 mb-4" />
-              <div className="text-3xl font-bold mb-2">${totalDonations.toLocaleString()}</div>
-              <div className="text-indigo-200">Total Raised</div>
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-3xl shadow-xl p-10 mb-16">
+          <div className="grid md:grid-cols-3 gap-10 text-center">
+            <div className="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <Heart className="h-16 w-16 mb-6" />
+              <div className="text-4xl font-bold mb-3">${totalDonations.toLocaleString()}</div>
+              <div className="text-indigo-100 text-lg">Total Raised</div>
             </div>
-            <div className="flex flex-col items-center">
-              <Users className="h-12 w-12 mb-4" />
-              <div className="text-3xl font-bold mb-2">{donations.length}</div>
-              <div className="text-indigo-200">Generous Donors</div>
+            <div className="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <Users className="h-16 w-16 mb-6" />
+              <div className="text-4xl font-bold mb-3">{donations.length}</div>
+              <div className="text-indigo-100 text-lg">Generous Donors</div>
             </div>
-            <div className="flex flex-col items-center">
-              <Target className="h-12 w-12 mb-4" />
-              <div className="text-3xl font-bold mb-2">500+</div>
-              <div className="text-indigo-200">Youth Impacted</div>
+            <div className="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <Target className="h-16 w-16 mb-6" />
+              <div className="text-4xl font-bold mb-3">500+</div>
+              <div className="text-indigo-100 text-lg">Youth Impacted</div>
             </div>
           </div>
         </div>
 
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-16">
             {/* Donation Form */}
             <div>
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Heart className="h-5 w-5 text-red-500" />
+                  <CardTitle className="flex items-center gap-3 text-2xl">
+                    <Heart className="h-6 w-6 text-red-500" />
                     Make a Donation
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleDonationSubmit} className="space-y-6">
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="donorName">Your Name</Label>
                       <Input
                         id="donorName"
@@ -608,7 +505,7 @@ export default function Home() {
                         placeholder="Enter your full name"
                       />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="amount">Donation Amount ($)</Label>
                       <Input
                         id="amount"
@@ -620,7 +517,7 @@ export default function Home() {
                         placeholder="Enter amount"
                         required
                       />
-                      <div className="grid grid-cols-4 gap-2 mt-2">
+                      <div className="grid grid-cols-4 gap-3 mt-4">
                         {[25, 50, 100, 250].map((preset) => (
                           <Button
                             key={preset}
@@ -628,13 +525,14 @@ export default function Home() {
                             variant="outline"
                             size="sm"
                             onClick={() => setDonationForm({ ...donationForm, amount: preset.toString() })}
+                            className="rounded-xl"
                           >
                             ${preset}
                           </Button>
                         ))}
                       </div>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="donationReason">Why are you donating?</Label>
                       <Textarea
                         id="donationReason"
@@ -645,7 +543,11 @@ export default function Home() {
                         required
                       />
                     </div>
-                    <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-lg py-6">
+                    <Button
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                      size="lg"
+                    >
                       Donate ${donationForm.amount || "0"}
                     </Button>
                   </form>
@@ -655,17 +557,17 @@ export default function Home() {
 
             {/* Recent Donations */}
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Recent Donations</h3>
-              <div className="space-y-4">
+              <h3 className="text-3xl font-bold text-gray-900 mb-8">Recent Donations</h3>
+              <div className="space-y-6">
                 {donations.map((donation) => (
                   <Card key={donation.id}>
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-semibold text-gray-900">{donation.name}</h4>
-                        <span className="text-lg font-bold text-green-600">${donation.amount}</span>
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start mb-3">
+                        <h4 className="font-bold text-gray-900 text-lg">{donation.name}</h4>
+                        <span className="text-2xl font-bold text-green-600">${donation.amount}</span>
                       </div>
-                      <p className="text-gray-600 text-sm mb-2">"{donation.reason}"</p>
-                      <p className="text-xs text-gray-500">{donation.date}</p>
+                      <p className="text-gray-600 text-sm mb-3 italic">"{donation.reason}"</p>
+                      <p className="text-xs text-gray-500 font-medium">{donation.date}</p>
                     </CardContent>
                   </Card>
                 ))}

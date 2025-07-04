@@ -1,41 +1,66 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin, Youtube } from "lucide-react"
+import { Facebook, Twitter, Instagram, Linkedin, Mail, MapPin, Youtube } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-indigo-900 text-white">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Organization Info */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Image src="/f4f-logo.png" alt="Framework 4 Future Logo" width={40} height={40} className="rounded" />
-              <span className="text-xl font-bold">Framework 4 Future</span>
+          <div className="space-y-6">
+            <div className="flex items-center space-x-3">
+              <Image src="/f4f-logo.png" alt="Framework 4 Future Logo" width={48} height={48} className="rounded-xl" />
+              <span className="text-2xl font-bold">Framework 4 Future</span>
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <p className="text-gray-300 text-base leading-relaxed">
               Empowering youth to become the next generation of leaders through community engagement, mentorship, and
               active service in the Carolinas.
             </p>
             <div className="flex space-x-4">
-              <a target="_blank" href="https://www.facebook.com/p/Framework-for-Future-100068639006501" className="text-gray-400 hover:text-white transition-colors">
-                <Facebook size={20} />
+              <a
+                target="_blank"
+                href="https://www.facebook.com/p/Framework-for-Future-100068639006501"
+                className="text-gray-400 hover:text-white transition-all duration-200 hover:scale-110 bg-white/10 p-3 rounded-xl backdrop-blur-sm"
+                rel="noreferrer"
+              >
+                <Facebook size={24} />
                 <span className="sr-only">Facebook</span>
               </a>
-              <a target="_blank" href="https://x.com/framework4futu1" className="text-gray-400 hover:text-white transition-colors">
-                <Twitter size={20} />
+              <a
+                target="_blank"
+                href="https://x.com/framework4futu1"
+                className="text-gray-400 hover:text-white transition-all duration-200 hover:scale-110 bg-white/10 p-3 rounded-xl backdrop-blur-sm"
+                rel="noreferrer"
+              >
+                <Twitter size={24} />
                 <span className="sr-only">Twitter</span>
               </a>
-              <a target="_blank" href="https://www.instagram.com/framework4future" className="text-gray-400 hover:text-white transition-colors">
-                <Instagram size={20} />
+              <a
+                target="_blank"
+                href="https://www.instagram.com/framework4future"
+                className="text-gray-400 hover:text-white transition-all duration-200 hover:scale-110 bg-white/10 p-3 rounded-xl backdrop-blur-sm"
+                rel="noreferrer"
+              >
+                <Instagram size={24} />
                 <span className="sr-only">Instagram</span>
               </a>
-              <a target="_blank" href="https://www.linkedin.com/in/framework-4future-0aa664178/" className="text-gray-400 hover:text-white transition-colors">
-                <Linkedin size={20} />
+              <a
+                target="_blank"
+                href="https://www.linkedin.com/in/framework-4future-0aa664178/"
+                className="text-gray-400 hover:text-white transition-all duration-200 hover:scale-110 bg-white/10 p-3 rounded-xl backdrop-blur-sm"
+                rel="noreferrer"
+              >
+                <Linkedin size={24} />
                 <span className="sr-only">LinkedIn</span>
               </a>
-              <a target="_blank" href="https://www.youtube.com/@framework4futureadmin526" className="text-gray-400 hover:text-white transition-colors">
-                <Youtube size={20} />
+              <a
+                target="_blank"
+                href="https://www.youtube.com/@framework4futureadmin526"
+                className="text-gray-400 hover:text-white transition-all duration-200 hover:scale-110 bg-white/10 p-3 rounded-xl backdrop-blur-sm"
+                rel="noreferrer"
+              >
+                <Youtube size={24} />
                 <span className="sr-only">YouTube</span>
               </a>
             </div>
@@ -43,35 +68,53 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xl font-bold mb-6">Quick Links</h3>
+            <ul className="space-y-3">
               <li>
-                <Link href="/" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <Link
+                  href="/"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/our-story" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <Link
+                  href="/our-story"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
+                >
                   Our Story
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <Link
+                  href="/about"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
+                >
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/events" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <Link
+                  href="/events"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
+                >
                   Events
                 </Link>
               </li>
               <li>
-                <Link href="/blogs" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <Link
+                  href="/blogs"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
+                >
                   Blogs
                 </Link>
               </li>
               <li>
-                <Link href="/gallery" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <Link
+                  href="/gallery"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
+                >
                   Gallery
                 </Link>
               </li>
@@ -80,30 +123,45 @@ export function Footer() {
 
           {/* Get Involved */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Get Involved</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xl font-bold mb-6">Get Involved</h3>
+            <ul className="space-y-3">
               <li>
-                <Link href="/donate" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <Link
+                  href="/donate"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
+                >
                   Donate
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <Link
+                  href="/contact"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
+                >
                   Volunteer
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <Link
+                  href="/contact"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
+                >
                   Partner With Us
                 </Link>
               </li>
               <li>
-                <Link href="/feedback" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <Link
+                  href="/feedback"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
+                >
                   Feedback
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <Link
+                  href="/contact"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
+                >
                   Join Our Team
                 </Link>
               </li>
@@ -112,43 +170,46 @@ export function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
-            <div className="space-y-3">
-              <div className="flex items-start space-x-3">
-                <MapPin size={16} className="text-gray-400 mt-1 flex-shrink-0" />
-                <span className="text-gray-300 text-sm">
+            <h3 className="text-xl font-bold mb-6">Contact Us</h3>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-4">
+                <MapPin size={20} className="text-indigo-400 mt-1 flex-shrink-0" />
+                <span className="text-gray-300 text-base">
                   Serving the Carolinas
                   <br />
                   North & South Carolina
                 </span>
               </div>
-              <div className="flex items-center space-x-3">
-                <Mail size={16} className="text-gray-400 flex-shrink-0" />
+              <div className="flex items-center space-x-4">
+                <Mail size={20} className="text-indigo-400 flex-shrink-0" />
                 <a
                   href="mailto:framework4future@gmail.com"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                  className="text-gray-300 hover:text-white transition-colors text-base font-medium"
                 >
                   framework4future@gmail.com
                 </a>
-              </div>              
+              </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-800 mt-8 pt-8">
+        <div className="border-t border-gray-700 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-gray-400 text-sm">
+            <div className="text-gray-400 text-base">
               © {new Date().getFullYear()} Framework 4 Future. All rights reserved.
             </div>
-            <div className="flex space-x-6">
-              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors text-sm">
+            <div className="flex space-x-8">
+              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors text-base font-medium">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-white transition-colors text-sm">
+              <Link href="/terms" className="text-gray-400 hover:text-white transition-colors text-base font-medium">
                 Terms of Service
               </Link>
-              <Link href="/accessibility" className="text-gray-400 hover:text-white transition-colors text-sm">
+              <Link
+                href="/accessibility"
+                className="text-gray-400 hover:text-white transition-colors text-base font-medium"
+              >
                 Accessibility
               </Link>
             </div>

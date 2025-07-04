@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Upload, X, Calendar } from "lucide-react"
+import { Upload } from "lucide-react"
 
 interface CreateProgramDialogProps {
   open: boolean
@@ -25,6 +25,7 @@ interface CreateProgramDialogProps {
       name: string
       description: string
       date: string
+      signUpUrl?: string
     },
     imageFile?: File,
   ) => void
@@ -34,145 +35,129 @@ export function CreateProgramDialog({ open, onOpenChange, onCreateProgram }: Cre
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [date, setDate] = useState("")
+  const [signUpUrl, setSignUpUrl] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
-  const [password, setPassword] = useState("")
-  const [passwordError, setPasswordError] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!name || !description || !date) return
 
-    // Check password
-    if (password !== "bruh123") {
-      setPasswordError(true)
-      return
+    setIsSubmitting(true)
+    try {
+      await onCreateProgram(
+        {
+          name,
+          description,
+          date,
+          signUpUrl: signUpUrl || undefined,
+        },
+        imageFile || undefined,
+      )
+
+      // Reset form
+      setName("")
+      setDescription("")
+      setDate("")
+      setSignUpUrl("")
+      setImageFile(null)
+    } catch (error) {
+      console.error("Error creating program:", error)
+    } finally {
+      setIsSubmitting(false)
     }
-
-    if (!name.trim() || !description.trim() || !date.trim()) {
-      return
-    }
-
-    onCreateProgram(
-      {
-        name: name.trim(),
-        description: description.trim(),
-        date: date.trim(),
-      },
-      imageFile || undefined,
-    )
-
-    // Reset form
-    setName("")
-    setDescription("")
-    setDate("")
-    setImageFile(null)
-    setPassword("")
-    setPasswordError(false)
   }
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       setImageFile(file)
     }
   }
 
-  const removeImage = () => {
-    setImageFile(null)
-  }
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="sm:max-w-[425px] rounded-2xl">
         <DialogHeader>
-          <DialogTitle>Create New Program</DialogTitle>
-          <DialogDescription>Add a new program to showcase your youth leadership initiatives.</DialogDescription>
+          <DialogTitle className="text-2xl font-bold">Create New Event</DialogTitle>
+          <DialogDescription>Add a new event to engage with your community.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-6 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Program Name</Label>
+              <Label htmlFor="name" className="font-semibold">
+                Event Name
+              </Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter program name"
+                placeholder="Enter event name"
                 required
+                className="rounded-xl"
               />
             </div>
-
             <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description" className="font-semibold">
+                Description
+              </Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe your program"
-                rows={3}
+                placeholder="Describe your event"
                 required
+                className="rounded-xl min-h-[100px]"
               />
             </div>
-
             <div className="grid gap-2">
-              <Label htmlFor="date">Date</Label>
-              <div className="relative">
-                <Input
-                  id="date"
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  required
-                  className="pl-10"
-                />
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="date" className="font-semibold">
+                Date
+              </Label>
               <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value)
-                  setPasswordError(false)
-                }}
-                placeholder="Enter password to create program"
+                id="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                placeholder="e.g., March 15, 2024 or Every 2nd Saturday"
                 required
-                className={passwordError ? "border-red-500" : ""}
+                className="rounded-xl"
               />
-              {passwordError && <p className="text-sm text-red-500">Incorrect password. Please try again.</p>}
             </div>
-
             <div className="grid gap-2">
-              <Label>Program Image</Label>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="imageFile" className="cursor-pointer">
-                    <div className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-                      <Upload className="h-4 w-4" />
-                      <span className="text-sm">Upload Image</span>
-                    </div>
-                  </Label>
-                  <Input id="imageFile" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                  {imageFile && (
-                    <Button type="button" variant="outline" size="sm" onClick={removeImage}>
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-
-                {imageFile && <p className="text-sm text-gray-600">Selected: {imageFile.name}</p>}
+              <Label htmlFor="signUpUrl" className="font-semibold">
+                Sign Up URL (Optional)
+              </Label>
+              <Input
+                id="signUpUrl"
+                type="url"
+                value={signUpUrl}
+                onChange={(e) => setSignUpUrl(e.target.value)}
+                placeholder="https://example.com/signup"
+                className="rounded-xl"
+              />
+              <p className="text-sm text-gray-500">Add a link where people can sign up for this event</p>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="image" className="font-semibold">
+                Event Image (Optional)
+              </Label>
+              <div className="flex items-center gap-2">
+                <Input id="image" type="file" accept="image/*" onChange={handleImageChange} className="rounded-xl" />
+                <Upload className="h-4 w-4 text-gray-400" />
               </div>
+              {imageFile && <p className="text-sm text-green-600">Selected: {imageFile.name}</p>}
             </div>
           </div>
-
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl">
               Cancel
             </Button>
-            <Button type="submit" className="bg-indigo-700 hover:bg-indigo-800">
-              Create Program
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl"
+            >
+              {isSubmitting ? "Creating..." : "Create Event"}
             </Button>
           </DialogFooter>
         </form>

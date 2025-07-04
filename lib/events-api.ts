@@ -9,6 +9,7 @@ const fallbackEvents: Event[] = [
       "Annual summit bringing together young leaders from across the Carolinas to share ideas and build networks.",
     image: "/placeholder.svg?height=300&width=400&text=Leadership+Summit",
     date: "March 15, 2024",
+    signUpUrl: "https://example.com/signup/leadership-summit",
   },
   {
     id: "2",
@@ -16,6 +17,7 @@ const fallbackEvents: Event[] = [
     description: "Monthly community service projects focusing on local environmental and social issues.",
     image: "/placeholder.svg?height=300&width=400&text=Community+Service",
     date: "Every 2nd Saturday",
+    signUpUrl: "https://example.com/signup/community-service",
   },
   {
     id: "3",
@@ -24,6 +26,7 @@ const fallbackEvents: Event[] = [
       "Interactive workshops teaching young people about local government and how to make their voices heard.",
     image: "/placeholder.svg?height=300&width=400&text=Civic+Workshop",
     date: "April 22, 2024",
+    signUpUrl: "https://example.com/signup/civic-workshop",
   },
 ]
 

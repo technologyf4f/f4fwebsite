@@ -1,42 +1,23 @@
 import { createClient } from "@supabase/supabase-js"
 
-// Check if environment variables are available and valid
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-// Helper function to validate URL
-function isValidUrl(string: string | undefined): boolean {
-  if (!string || string.trim() === "") return false
-  try {
-    new URL(string)
-    return true
-  } catch (_) {
-    return false
-  }
+// Check if Supabase environment variables are configured
+export function isSupabaseConfigured(): boolean {
+  return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 }
 
-// Helper function to check if Supabase is properly configured
-export const isSupabaseConfigured = (): boolean => {
-  return !!(
-    supabaseUrl &&
-    supabaseAnonKey &&
-    isValidUrl(supabaseUrl) &&
-    supabaseAnonKey.trim() !== "" &&
-    supabaseUrl !== "your_supabase_project_url" &&
-    supabaseAnonKey !== "your_supabase_anon_key"
-  )
-}
+// Create Supabase client only if configured
+export const supabase = isSupabaseConfigured()
+  ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+  : null
 
-// Create client only if environment variables are properly configured
-export const supabase = isSupabaseConfigured() ? createClient(supabaseUrl!, supabaseAnonKey!) : null
-
-// Types for our data
+// Database types
 export interface Event {
   id: string
   name: string
   description: string
   image: string
   date: string
+  signUpUrl?: string
   created_at?: string
   updated_at?: string
 }
@@ -45,8 +26,19 @@ export interface Blog {
   id: string
   title: string
   content: string
+  excerpt?: string
+  image: string
   author: string
   date: string
-  image: string
+  category_id?: string
+  category?: BlogCategory
+  created_at?: string
+  updated_at?: string
+}
+
+export interface BlogCategory {
+  id: string
+  name: string
+  description?: string
   created_at?: string
 }

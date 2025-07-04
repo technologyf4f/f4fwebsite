@@ -1,13 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { UserCircle, Plus, ArrowLeft, Clock, Calendar } from "lucide-react"
-import { CreateBlogDialog } from "@/components/create-blog-dialog"
+import { BlogsSection } from "@/components/blogs-section"
 
 interface Blog {
   id: string
@@ -66,7 +60,6 @@ export default function BlogsPage() {
   ])
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
 
   const handleCreateBlog = (newBlog: Omit<Blog, "id">) => {
     const blog: Blog = {
@@ -77,181 +70,30 @@ export default function BlogsPage() {
     setIsCreateDialogOpen(false)
   }
 
-  const allCategories = Array.from(new Set(blogs.flatMap((blog) => blog.categories))).sort()
-
-  const filteredBlogs = activeCategory ? blogs.filter((blog) => blog.categories.includes(activeCategory)) : blogs
-
-  const featuredBlog = blogs.find((blog) => blog.featured)
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}      
-
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50">
       {/* Blogs Header */}
-      <section className="bg-white border-b">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">              
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Our Blogs</h1>
-                <p className="text-gray-600 mt-2">Insights and stories from our youth leadership community</p>
-              </div>
-            </div>
-            <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-indigo-700 hover:bg-indigo-800">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Blog Post
-            </Button>
+      <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+        <div className="container mx-auto px-6 py-16">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Blog</h1>
+            <p className="text-indigo-100 text-lg">Insights and stories from our youth leadership community</p>
           </div>
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4 overflow-x-auto">
-          <div className="flex gap-2">
-            <Button
-              variant={activeCategory === null ? "default" : "outline"}
-              size="sm"
-              onClick={() => setActiveCategory(null)}
-              className={activeCategory === null ? "bg-indigo-700 hover:bg-indigo-800" : ""}
-            >
-              All
-            </Button>
-            {allCategories.map((category) => (
-              <Button
-                key={category}
-                variant={activeCategory === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setActiveCategory(category)}
-                className={activeCategory === category ? "bg-indigo-700 hover:bg-indigo-800" : ""}
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-        </div>
+      {/* Blogs Content */}
+      <section className="container mx-auto px-6 py-20">
+        <BlogsSection
+          showCategoryFilter={true}
+          title=""
+          description=""
+          blogs={blogs}
+          onCreateBlog={handleCreateBlog}
+          isCreateDialogOpen={isCreateDialogOpen}
+          setIsCreateDialogOpen={setIsCreateDialogOpen}
+        />
       </section>
-
-      {/* Featured Blog */}
-      {featuredBlog && (
-        <section className="container mx-auto px-4 py-8">
-          <h2 className="text-2xl font-bold mb-6">Featured Post</h2>
-          <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="aspect-video relative">
-                <Image
-                  src={featuredBlog.image || "/placeholder.svg"}
-                  alt={featuredBlog.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex gap-2 mb-4">
-                  {featuredBlog.categories.map((category) => (
-                    <Badge key={category} variant="secondary">
-                      {category}
-                    </Badge>
-                  ))}
-                </div>
-                <h3 className="text-2xl font-bold mb-2">{featuredBlog.title}</h3>
-                <p className="text-gray-600 mb-4">{featuredBlog.excerpt}</p>
-                <div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    <span>{featuredBlog.date}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>{featuredBlog.readingTime}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-                  <span className="font-medium">{featuredBlog.author}</span>
-                </div>
-                <Button className="bg-indigo-700 hover:bg-indigo-800">Read More</Button>
-              </div>
-            </div>
-          </Card>
-        </section>
-      )}
-
-      {/* Blogs Grid */}
-      <section className="container mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold mb-6">Latest Posts</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredBlogs.map((blog) => (
-            <Card key={blog.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video relative">
-                <Image src={blog.image || "/placeholder.svg"} alt={blog.title} fill className="object-cover" />
-              </div>
-              <CardHeader>
-                <div className="flex gap-2 mb-2">
-                  {blog.categories.map((category) => (
-                    <Badge key={category} variant="outline">
-                      {category}
-                    </Badge>
-                  ))}
-                </div>
-                <CardTitle className="text-xl">{blog.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 mb-4">{blog.excerpt}</p>
-              </CardContent>
-              <CardFooter className="flex flex-col items-start gap-4">
-                <div className="flex items-center justify-between w-full text-sm text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    <span>{blog.date}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>{blog.readingTime}</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-                    <span className="text-sm">{blog.author}</span>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Read More
-                  </Button>
-                </div>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-
-        {filteredBlogs.length === 0 && (
-          <div className="text-center py-12">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No blog posts found</h3>
-            <p className="text-gray-600 mb-6">
-              {activeCategory
-                ? `No posts in the "${activeCategory}" category. Try another category or create a new post.`
-                : "Create your first blog post to get started!"}
-            </p>
-            <div className="flex justify-center gap-4">
-              {activeCategory && (
-                <Button variant="outline" onClick={() => setActiveCategory(null)}>
-                  View All Posts
-                </Button>
-              )}
-              <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-indigo-700 hover:bg-indigo-800">
-                <Plus className="h-4 w-4 mr-2" />
-                Create Blog Post
-              </Button>
-            </div>
-          </div>
-        )}
-      </section>
-
-      <CreateBlogDialog
-        open={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-        onCreateBlog={handleCreateBlog}
-      />
     </div>
   )
 }
