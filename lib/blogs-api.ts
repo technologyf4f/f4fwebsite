@@ -11,8 +11,7 @@ const fallbackCategories: BlogCategory[] = [
 const fallbackBlogs: Blog[] = [
   {
     id: "1",
-    title: "Youth Leadership in the Digital Age",
-    excerpt: "Exploring how young leaders are leveraging technology to create positive change in their communities.",
+    title: "Youth Leadership in the Digital Age",    
     image: "/placeholder.svg?height=300&width=400&text=Digital+Leadership",
     date: "2024-06-02",
     author: "Maria Rodriguez",
@@ -24,8 +23,7 @@ const fallbackBlogs: Blog[] = [
   },
   {
     id: "2",
-    title: "Building Inclusive Communities Through Service",
-    excerpt: "How community service projects are bringing diverse groups together to solve local challenges.",
+    title: "Building Inclusive Communities Through Service",    
     image: "/placeholder.svg?height=300&width=400&text=Community+Service",
     date: "2024-05-15",
     author: "James Washington",
@@ -37,8 +35,7 @@ const fallbackBlogs: Blog[] = [
   },
   {
     id: "3",
-    title: "The Future of Civic Engagement",
-    excerpt: "New approaches to engaging young people in democratic processes and community decision-making.",
+    title: "The Future of Civic Engagement",    
     image: "/placeholder.svg?height=300&width=400&text=Civic+Engagement",
     date: "2024-04-28",
     author: "Sophia Chen",
@@ -96,8 +93,7 @@ export async function getBlogs(categoryId?: string): Promise<Blog[]> {
       .select(`
         id, 
         title, 
-        content, 
-        excerpt, 
+        content,         
         author, 
         date, 
         image, 
@@ -164,8 +160,7 @@ export async function createBlog(
       .select(`
         id, 
         title, 
-        content, 
-        excerpt, 
+        content,         
         author, 
         date, 
         image, 
@@ -239,8 +234,7 @@ export async function updateBlog(id: string, partial: Partial<Blog>, imageFile?:
       .select(`
         id, 
         title, 
-        content, 
-        excerpt, 
+        content,         
         author, 
         date, 
         image, 
