@@ -3,26 +3,7 @@ import Link from "next/link"
 
 export default function OurStoryPage() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b sticky top-0 bg-white z-50">
-        <div className="container mx-auto px-2 py-3">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <Image
-                src="/f4f-logo.png"
-                alt="Framework 4 Future Logo"
-                width={200}
-                height={60}
-                className="h-10 w-auto"
-              />
-            </Link>
-            <Link href="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-3 text-lg">
-              ← Back to Home
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-white">            
 
       {/* Hero Section with Image */}
       <section className="relative h-96 overflow-hidden">

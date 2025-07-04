@@ -17,7 +17,7 @@ export function Footer() {
               Empowering youth to become the next generation of leaders through community engagement, mentorship, and
               active service in the Carolinas.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-1">
               <a
                 target="_blank"
                 href="https://www.facebook.com/p/Framework-for-Future-100068639006501"

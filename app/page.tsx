@@ -14,7 +14,7 @@ import { Users, Heart, Target, Award, ArrowRight, BookOpen, Plus } from "lucide-
 
 export default function HomePage() {
   const [showCreateBlog, setShowCreateBlog] = useState(false)
-  const [showCreateProgram, setShowCreateProgram] = useState(false)
+  const [showCreateEvent, setShowCreateEvent] = useState(false)
 
   const handleCreateBlog = async (
     blog: {
@@ -38,7 +38,7 @@ export default function HomePage() {
     }
   }
 
-  const handleCreateProgram = async (
+  const handleCreateEvent = async (
     program: {
       name: string
       description: string
@@ -65,19 +65,14 @@ export default function HomePage() {
       <section className="relative py-32 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-6 bg-white/20 text-white border-white/30 px-6 py-2 text-lg font-semibold rounded-full">
+          <div className="max-w-4xl mx-auto text-center">            
+            <h1 className="text-6xl font-bold mb-8 leading-tight">            
               Empowering Tomorrow's Leaders
-            </Badge>
-            <h1 className="text-6xl font-bold mb-8 leading-tight">
-              Building a Future
-              <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                For Everyone
-              </span>
             </h1>
             <p className="text-2xl mb-12 opacity-90 leading-relaxed">
-              Join our community of young leaders dedicated to creating positive change through civic engagement,
-              leadership development, and community service.
+              We help develop next generation of youth leaders through intentional and impactful collaboration,
+              civic engagement and service projects at the local, regional and national level, while creating pathways
+              for leadership development.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Button
@@ -95,89 +90,76 @@ export default function HomePage() {
                 Learn More
               </Button>
             </div>
-          </div>
-        </div>
+          </div>          
+        </div>        
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent"></div>
       </section>
 
-      {/* Mission Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      {/* About Section */}
+      <section id="about" className="container mx-auto px-6 py-20 bg-gradient-to-br from-gray-50 to-white">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Mission</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We believe in the power of young people to create meaningful change in their communities and beyond.
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Founder's Message
+            </h2>
+            <p className="text-gray-600 text-lg">Learn more about our mission and impact</p>
+            <div className="h-1 w-32 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto mt-8 rounded-full"></div>
+          </div>
+
+          {/* Mission Statement */}
+          <div className="bg-white rounded-3xl shadow-xl p-10 mb-16 border border-gray-100">
+            <h3 className="text-3xl font-bold text-gray-900 mb-8">Our Mission</h3>
+            <p className="text-xl text-gray-700 leading-relaxed">
+              We help develop next generation of youth leaders through intentional and impactful collaboration, civic
+              engagement and service projects at the local, regional and national level, while creating pathways for
+              leadership development.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: Users,
-                title: "Community Building",
-                description: "Connecting young leaders across diverse backgrounds and experiences.",
-              },
-              {
-                icon: Heart,
-                title: "Service Learning",
-                description: "Combining community service with educational experiences.",
-              },
-              {
-                icon: Target,
-                title: "Civic Engagement",
-                description: "Encouraging active participation in democratic processes.",
-              },
-              {
-                icon: Award,
-                title: "Leadership Development",
-                description: "Building skills and confidence for tomorrow's leaders.",
-              },
-            ].map((item, index) => (
-              <Card
-                key={index}
-                className="text-center hover:shadow-2xl transition-all duration-300 group border-0 shadow-lg rounded-3xl hover:scale-105"
-              >
-                <CardHeader className="pb-4">
-                  <div className="mx-auto w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <item.icon className="h-8 w-8 text-white" />
-                  </div>
-                  <CardTitle className="text-xl font-bold text-gray-900">{item.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 leading-relaxed">{item.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Impact Stats */}
-      <section className="py-20 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Our Impact</h2>
-            <p className="text-xl opacity-90">Making a difference, one community at a time.</p>
+          {/* Video Section */}
+          <div className="bg-white rounded-3xl shadow-xl p-10 mb-16 border border-gray-100">
+            <h3 className="text-3xl font-bold text-gray-900 mb-8">Watch Our Story</h3>
+            <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-lg">
+              <iframe
+                src="https://www.youtube.com/embed/j_o_OkOQBeo"
+                title="Framework 4 Future Video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { number: "500+", label: "Young Leaders Engaged" },
-              { number: "50+", label: "Community Projects" },
-              { number: "10,000+", label: "Lives Impacted" },
-            ].map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-5xl font-bold mb-2">{stat.number}</div>
-                <div className="text-xl opacity-90">{stat.label}</div>
+
+          {/* Impact Stats */}
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-3xl shadow-xl p-10">
+            <h3 className="text-3xl font-bold mb-10 text-center">Our Impact</h3>
+            <div className="grid md:grid-cols-3 gap-10 text-center">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <div className="text-5xl font-bold mb-3">500+</div>
+                <div className="text-indigo-100 text-lg">Youth Leaders Trained</div>
               </div>
-            ))}
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <div className="text-5xl font-bold mb-3">50+</div>
+                <div className="text-indigo-100 text-lg">Community Projects</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <div className="text-5xl font-bold mb-3">25+</div>
+                <div className="text-indigo-100 text-lg">Partner Organizations</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Events Section */}
-      <EventsSection limit={3} showViewAll={true} />
+      <section id="events" className="container mx-auto px-6 py-20">
+        <EventsSection limit={3} showMoreButton={true} />
+      </section>
 
-      {/* Blog Section */}
-      <BlogsSection limit={3} showViewAll={true} />
+      {/* Blogs Section */}
+      <section id="blogs" className="container mx-auto px-6 py-20 bg-gradient-to-br from-gray-50 to-white">
+        <BlogsSection limit={3} showMoreButton={true} />
+      </section>      
 
       {/* Call to Action */}
       <section className="py-20 bg-gradient-to-r from-gray-900 to-indigo-900 text-white">
@@ -204,31 +186,14 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Floating Action Buttons */}
-      <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
-        <Button
-          onClick={() => setShowCreateBlog(true)}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300"
-          title="Create Blog Post"
-        >
-          <BookOpen className="h-5 w-5" />
-        </Button>
-        <Button
-          onClick={() => setShowCreateProgram(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300"
-          title="Create Program"
-        >
-          <Plus className="h-5 w-5" />
-        </Button>
-      </div>
+      
 
       {/* Dialogs */}
       <CreateBlogDialog open={showCreateBlog} onOpenChange={setShowCreateBlog} onCreateBlog={handleCreateBlog} />
       <CreateProgramDialog
-        open={showCreateProgram}
-        onOpenChange={setShowCreateProgram}
-        onCreateProgram={handleCreateProgram}
+        open={showCreateEvent}
+        onOpenChange={setShowCreateEvent}
+        onCreateProgram={handleCreateEvent}
       />
     </div>
   )

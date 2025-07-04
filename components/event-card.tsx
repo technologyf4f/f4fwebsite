@@ -63,7 +63,8 @@ export function EventCard({ event, showLearnMore = true }: EventCardProps) {
             {showLearnMore && (
               <Button
                 variant="outline"
-                onClick={() => setShowDetails(true)}
+                onClick={() => setShowDetails(true)}                
+              className="w-full rounded-xl border-2 border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 font-semibold bg-transparent"
                 className={`${
                   event.signUpUrl ? "flex-1" : "w-full"
                 } rounded-xl border-2 border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 font-semibold h-12 bg-transparent`}
@@ -77,7 +78,7 @@ export function EventCard({ event, showLearnMore = true }: EventCardProps) {
 
       {/* Event Details Dialog */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-2xl rounded-2xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-3xl font-bold text-gray-900 mb-4">{event.name}</DialogTitle>
           </DialogHeader>
