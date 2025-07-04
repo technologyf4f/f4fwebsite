@@ -1,581 +1,235 @@
 "use client"
 
-import type React from "react"
-import type { ReactNode } from "react"
-import Image from "next/image"
 import { useState } from "react"
-
-import { EventsSection } from "@/components/events-section"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { CreateBlogDialog } from "@/components/create-blog-dialog"
+import { CreateProgramDialog } from "@/components/create-program-dialog"
 import { BlogsSection } from "@/components/blogs-section"
+import { EventsSection } from "@/components/events-section"
+import { createBlog } from "@/lib/blogs-api"
+import { createEvent } from "@/lib/events-api"
+import { Users, Heart, Target, Award, ArrowRight, BookOpen, Plus } from "lucide-react"
 
-// Inline UI Components
-const Button = ({
-  children,
-  onClick,
-  variant = "default",
-  size = "default",
-  className = "",
-  type = "button",
-  ...props
-}: {
-  children: ReactNode
-  onClick?: () => void
-  variant?: "default" | "outline" | "ghost"
-  size?: "default" | "sm" | "lg" | "icon"
-  className?: string
-  type?: "button" | "submit"
-  [key: string]: any
-}) => {
-  const baseClasses =
-    "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background shadow-sm hover:shadow-md"
+export default function HomePage() {
+  const [showCreateBlog, setShowCreateBlog] = useState(false)
+  const [showCreateProgram, setShowCreateProgram] = useState(false)
 
-  const variants = {
-    default:
-      "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg",
-    outline: "border-2 border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-700 hover:text-indigo-700",
-    ghost: "hover:bg-gray-100 text-gray-700 hover:text-indigo-700",
-  }
-
-  const sizes = {
-    default: "h-11 py-3 px-6",
-    sm: "h-9 px-4 text-sm",
-    lg: "h-14 px-8 text-lg",
-    icon: "h-10 w-10",
-  }
-
-  return (
-    <button
-      type={type}
-      onClick={onClick}
-      className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
-      {...props}
-    >
-      {children}
-    </button>
-  )
-}
-
-const Card = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <div
-    className={`rounded-2xl border border-gray-100 bg-white text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 ${className}`}
-  >
-    {children}
-  </div>
-)
-
-const CardHeader = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <div className={`flex flex-col space-y-2 p-8 ${className}`}>{children}</div>
-)
-
-const CardTitle = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <h3 className={`text-2xl font-bold leading-tight tracking-tight text-gray-900 ${className}`}>{children}</h3>
-)
-
-const CardContent = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <div className={`p-8 pt-0 ${className}`}>{children}</div>
-)
-
-const Input = ({ className = "", ...props }: { className?: string; [key: string]: any }) => (
-  <input
-    className={`flex h-12 w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:border-indigo-300 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 ${className}`}
-    {...props}
-  />
-)
-
-const Textarea = ({ className = "", ...props }: { className?: string; [key: string]: any }) => (
-  <textarea
-    className={`flex min-h-[120px] w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-sm ring-offset-background placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:border-indigo-300 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 ${className}`}
-    {...props}
-  />
-)
-
-const Label = ({
-  children,
-  htmlFor,
-  className = "",
-}: { children: ReactNode; htmlFor?: string; className?: string }) => (
-  <label
-    htmlFor={htmlFor}
-    className={`text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700 ${className}`}
-  >
-    {children}
-  </label>
-)
-
-// Inline Icons
-const Heart = ({ className = "" }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M4.318 6.318a4 4 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-    />
-  </svg>
-)
-
-const Users = ({ className = "" }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a4 4 0 11-8 0 4 4 0 018 0z"
-    />
-  </svg>
-)
-
-const Target = ({ className = "" }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-    />
-  </svg>
-)
-
-const Mail = ({ className = "" }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-    />
-  </svg>
-)
-
-// Main Component
-export default function Home() {
-  // State Management
-  const [donations] = useState([
-    {
-      id: "1",
-      name: "Sarah Johnson",
-      amount: 100,
-      reason: "Supporting youth leadership development in my community",
-      date: "June 5, 2024",
+  const handleCreateBlog = async (
+    blog: {
+      title: string
+      content: string
+      date: string
+      author: string
+      category_id?: string
     },
-    {
-      id: "2",
-      name: "Michael Chen",
-      amount: 250,
-      reason: "Believe in empowering the next generation of leaders",
-      date: "June 3, 2024",
-    },
-  ])
-
-  const [contactForm, setContactForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    subject: "",
-    message: "",
-  })
-
-  const [donationForm, setDonationForm] = useState({
-    name: "",
-    amount: "",
-    reason: "",
-  })
-
-  const totalDonations = donations.reduce((sum, donation) => sum + donation.amount, 0)
-
-  const scrollToSection = (sectionId: string) => {
-    if (typeof window !== "undefined") {
-      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" })
+    imageFile?: File,
+  ) => {
+    try {
+      await createBlog(blog, imageFile)
+      setShowCreateBlog(false)
+      alert("Blog post created successfully!")
+      // Refresh the page to show the new blog
+      window.location.reload()
+    } catch (error) {
+      console.error("Failed to create blog:", error)
+      alert("Failed to create blog post. Please try again.")
     }
   }
 
-  const handleContactSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    alert("Thank you for your message! We'll get back to you soon.")
-    setContactForm({ firstName: "", lastName: "", email: "", subject: "", message: "" })
-  }
-
-  const handleDonationSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    alert("Thank you for your donation! In a real application, this would redirect to a secure payment processor.")
-    setDonationForm({ name: "", amount: "", reason: "" })
+  const handleCreateProgram = async (
+    program: {
+      name: string
+      description: string
+      date: string
+      signUpUrl?: string
+    },
+    imageFile?: File,
+  ) => {
+    try {
+      await createEvent(program, imageFile)
+      setShowCreateProgram(false)
+      alert("Program created successfully!")
+      // Refresh the page to show the new program
+      window.location.reload()
+    } catch (error) {
+      console.error("Failed to create program:", error)
+      alert("Failed to create program. Please try again.")
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Hero Section */}
-      <section id="home" className="relative min-h-screen overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="grid grid-cols-4 h-full">
-            <div className="bg-gradient-to-br from-red-500 to-red-600"></div>
-            <div className="bg-gradient-to-br from-green-400 to-emerald-500"></div>
-            <div className="bg-gradient-to-br from-orange-400 to-amber-500"></div>
-            <div className="bg-gradient-to-br from-blue-500 to-indigo-600"></div>
+      <section className="relative py-32 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white overflow-hidden">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <Badge className="mb-6 bg-white/20 text-white border-white/30 px-6 py-2 text-lg font-semibold rounded-full">
+              Empowering Tomorrow's Leaders
+            </Badge>
+            <h1 className="text-6xl font-bold mb-8 leading-tight">
+              Building a Future
+              <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                For Everyone
+              </span>
+            </h1>
+            <p className="text-2xl mb-12 opacity-90 leading-relaxed">
+              Join our community of young leaders dedicated to creating positive change through civic engagement,
+              leadership development, and community service.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Button
+                size="lg"
+                className="bg-white text-indigo-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Get Involved
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-indigo-600 px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-transparent"
+              >
+                Learn More
+              </Button>
+            </div>
           </div>
         </div>
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent"></div>
+      </section>
 
-        <div className="container mx-auto px-6 py-20 md:py-32 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="bg-white/95 backdrop-blur-sm p-8 md:p-12 rounded-3xl shadow-2xl border border-white/20">
-              <p className="text-gray-600 mb-8 leading-relaxed text-lg">
-                We help develop next generation of youth leaders through intentional and impactful collaboration, civic
-                engagement and service projects at the local, regional and national level, while creating pathways for
-                leadership development.
-              </p>
-
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-10 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Helping youth lead community engagement in the Carolinas.
-              </h1>
-
-              <div className="flex flex-col sm:flex-row gap-6">
-                <Button
-                  onClick={() => scrollToSection("events")}
-                  size="lg"
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-xl hover:shadow-2xl transform hover:scale-105"
-                >
-                  Become a member
-                </Button>
-              </div>
-            </div>
-
-            <div className="hidden md:grid grid-cols-2 gap-6">
-              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden relative shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-                <Image
-                  src="/placeholder.svg?height=300&width=300&text=Youth+Leaders"
-                  alt="Youth leaders"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden relative shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-                <Image
-                  src="/placeholder.svg?height=300&width=300&text=Community+Service"
-                  alt="Community service"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden relative shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-                <Image
-                  src="/placeholder.svg?height=300&width=300&text=Leadership+Workshop"
-                  alt="Leadership workshop"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden relative shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-                <Image
-                  src="/placeholder.svg?height=300&width=300&text=Civic+Engagement"
-                  alt="Civic engagement"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
+      {/* Mission Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Mission</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              We believe in the power of young people to create meaningful change in their communities and beyond.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                icon: Users,
+                title: "Community Building",
+                description: "Connecting young leaders across diverse backgrounds and experiences.",
+              },
+              {
+                icon: Heart,
+                title: "Service Learning",
+                description: "Combining community service with educational experiences.",
+              },
+              {
+                icon: Target,
+                title: "Civic Engagement",
+                description: "Encouraging active participation in democratic processes.",
+              },
+              {
+                icon: Award,
+                title: "Leadership Development",
+                description: "Building skills and confidence for tomorrow's leaders.",
+              },
+            ].map((item, index) => (
+              <Card
+                key={index}
+                className="text-center hover:shadow-2xl transition-all duration-300 group border-0 shadow-lg rounded-3xl hover:scale-105"
+              >
+                <CardHeader className="pb-4">
+                  <div className="mx-auto w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <item.icon className="h-8 w-8 text-white" />
+                  </div>
+                  <CardTitle className="text-xl font-bold text-gray-900">{item.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 leading-relaxed">{item.description}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="container mx-auto px-6 py-20 bg-gradient-to-br from-gray-50 to-white">
-        <div className="max-w-6xl mx-auto">
+      {/* Impact Stats */}
+      <section className="py-20 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Founder's Message
-            </h2>
-            <p className="text-gray-600 text-lg">Learn more about our mission and impact</p>
-            <div className="h-1 w-32 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto mt-8 rounded-full"></div>
+            <h2 className="text-4xl font-bold mb-4">Our Impact</h2>
+            <p className="text-xl opacity-90">Making a difference, one community at a time.</p>
           </div>
-
-          {/* Mission Statement */}
-          <div className="bg-white rounded-3xl shadow-xl p-10 mb-16 border border-gray-100">
-            <h3 className="text-3xl font-bold text-gray-900 mb-8">Our Mission</h3>
-            <p className="text-xl text-gray-700 leading-relaxed">
-              We help develop next generation of youth leaders through intentional and impactful collaboration, civic
-              engagement and service projects at the local, regional and national level, while creating pathways for
-              leadership development.
-            </p>
-          </div>
-
-          {/* Video Section */}
-          <div className="bg-white rounded-3xl shadow-xl p-10 mb-16 border border-gray-100">
-            <h3 className="text-3xl font-bold text-gray-900 mb-8">Watch Our Story</h3>
-            <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-lg">
-              <iframe
-                src="https://www.youtube.com/embed/j_o_OkOQBeo"
-                title="Framework 4 Future Video"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="w-full h-full"
-              ></iframe>
-            </div>
-          </div>
-
-          {/* Impact Stats */}
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-3xl shadow-xl p-10">
-            <h3 className="text-3xl font-bold mb-10 text-center">Our Impact</h3>
-            <div className="grid md:grid-cols-3 gap-10 text-center">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-                <div className="text-5xl font-bold mb-3">500+</div>
-                <div className="text-indigo-100 text-lg">Youth Leaders Trained</div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { number: "500+", label: "Young Leaders Engaged" },
+              { number: "50+", label: "Community Projects" },
+              { number: "10,000+", label: "Lives Impacted" },
+            ].map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-5xl font-bold mb-2">{stat.number}</div>
+                <div className="text-xl opacity-90">{stat.label}</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-                <div className="text-5xl font-bold mb-3">50+</div>
-                <div className="text-indigo-100 text-lg">Community Projects</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-                <div className="text-5xl font-bold mb-3">25+</div>
-                <div className="text-indigo-100 text-lg">Partner Organizations</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Events Section */}
-      <section id="events" className="container mx-auto px-6 py-20">
-        <EventsSection limit={3} showMoreButton={true} />
-      </section>
+      <EventsSection limit={3} showViewAll={true} />
 
-      {/* Blogs Section */}
-      <section id="blogs" className="container mx-auto px-6 py-20 bg-gradient-to-br from-gray-50 to-white">
-        <BlogsSection limit={3} showMoreButton={true} />
-      </section>
+      {/* Blog Section */}
+      <BlogsSection limit={3} showViewAll={true} />
 
-      {/* Contact Section */}
-      <section id="contact-us" className="container mx-auto px-6 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Contact Us
-          </h2>
-          <p className="text-gray-600 text-lg">Get in touch with our team</p>
-          <div className="h-1 w-32 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto mt-8 rounded-full"></div>
-        </div>
-
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16">
-            {/* Contact Information */}
-            <div>
-              <h3 className="text-3xl font-bold text-gray-900 mb-10">Get in Touch</h3>
-              <div className="space-y-8 mb-10">
-                <Card>
-                  <CardContent className="p-8">
-                    <div className="flex items-center gap-6">
-                      <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
-                        <Mail className="h-8 w-8 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-gray-900 text-lg mb-2">Email</h4>
-                        <a
-                          href="mailto:framework4future@gmail.com"
-                          className="text-indigo-600 hover:text-indigo-800 font-semibold transition-colors"
-                        >
-                          framework4future@gmail.com
-                        </a>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-
-            {/* Contact Form */}
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-2xl">Send us a Message</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleContactSubmit} className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input
-                          id="firstName"
-                          value={contactForm.firstName}
-                          onChange={(e) => setContactForm({ ...contactForm, firstName: e.target.value })}
-                          placeholder="Your first name"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input
-                          id="lastName"
-                          value={contactForm.lastName}
-                          onChange={(e) => setContactForm({ ...contactForm, lastName: e.target.value })}
-                          placeholder="Your last name"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={contactForm.email}
-                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                        placeholder="your.email@example.com"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="subject">Subject</Label>
-                      <Input
-                        id="subject"
-                        value={contactForm.subject}
-                        onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
-                        placeholder="What is this regarding?"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Message</Label>
-                      <Textarea
-                        id="message"
-                        value={contactForm.message}
-                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                        placeholder="Tell us more about how we can help you..."
-                        rows={6}
-                        required
-                      />
-                    </div>
-                    <Button type="submit" className="w-full" size="lg">
-                      Send Message
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
+      {/* Call to Action */}
+      <section className="py-20 bg-gradient-to-r from-gray-900 to-indigo-900 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold mb-6">Ready to Make a Difference?</h2>
+          <p className="text-xl mb-12 opacity-90 max-w-2xl mx-auto">
+            Join our community of young leaders and start creating positive change in your community today.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Button
+              size="lg"
+              className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Join Our Community
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-transparent"
+            >
+              Learn More About Us
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* Donate Section */}
-      <section id="donate" className="container mx-auto px-6 py-20 bg-gradient-to-br from-gray-50 to-white">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Support Our Mission
-          </h2>
-          <p className="text-gray-600 text-lg">Help us empower the next generation of leaders</p>
-          <div className="h-1 w-32 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto mt-8 rounded-full"></div>
-        </div>
+      {/* Floating Action Buttons */}
+      <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
+        <Button
+          onClick={() => setShowCreateBlog(true)}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300"
+          title="Create Blog Post"
+        >
+          <BookOpen className="h-5 w-5" />
+        </Button>
+        <Button
+          onClick={() => setShowCreateProgram(true)}
+          className="bg-purple-600 hover:bg-purple-700 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300"
+          title="Create Program"
+        >
+          <Plus className="h-5 w-5" />
+        </Button>
+      </div>
 
-        {/* Impact Stats */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-3xl shadow-xl p-10 mb-16">
-          <div className="grid md:grid-cols-3 gap-10 text-center">
-            <div className="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-              <Heart className="h-16 w-16 mb-6" />
-              <div className="text-4xl font-bold mb-3">${totalDonations.toLocaleString()}</div>
-              <div className="text-indigo-100 text-lg">Total Raised</div>
-            </div>
-            <div className="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-              <Users className="h-16 w-16 mb-6" />
-              <div className="text-4xl font-bold mb-3">{donations.length}</div>
-              <div className="text-indigo-100 text-lg">Generous Donors</div>
-            </div>
-            <div className="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-              <Target className="h-16 w-16 mb-6" />
-              <div className="text-4xl font-bold mb-3">500+</div>
-              <div className="text-indigo-100 text-lg">Youth Impacted</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16">
-            {/* Donation Form */}
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-2xl">
-                    <Heart className="h-6 w-6 text-red-500" />
-                    Make a Donation
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleDonationSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="donorName">Your Name</Label>
-                      <Input
-                        id="donorName"
-                        value={donationForm.name}
-                        onChange={(e) => setDonationForm({ ...donationForm, name: e.target.value })}
-                        placeholder="Enter your full name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="amount">Donation Amount ($)</Label>
-                      <Input
-                        id="amount"
-                        type="number"
-                        min="1"
-                        step="0.01"
-                        value={donationForm.amount}
-                        onChange={(e) => setDonationForm({ ...donationForm, amount: e.target.value })}
-                        placeholder="Enter amount"
-                        required
-                      />
-                      <div className="grid grid-cols-4 gap-3 mt-4">
-                        {[25, 50, 100, 250].map((preset) => (
-                          <Button
-                            key={preset}
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setDonationForm({ ...donationForm, amount: preset.toString() })}
-                            className="rounded-xl"
-                          >
-                            ${preset}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="donationReason">Why are you donating?</Label>
-                      <Textarea
-                        id="donationReason"
-                        value={donationForm.reason}
-                        onChange={(e) => setDonationForm({ ...donationForm, reason: e.target.value })}
-                        placeholder="Tell us what motivates your support..."
-                        rows={4}
-                        required
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
-                      size="lg"
-                    >
-                      Donate ${donationForm.amount || "0"}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Recent Donations */}
-            <div>
-              <h3 className="text-3xl font-bold text-gray-900 mb-8">Recent Donations</h3>
-              <div className="space-y-6">
-                {donations.map((donation) => (
-                  <Card key={donation.id}>
-                    <CardContent className="p-6">
-                      <div className="flex justify-between items-start mb-3">
-                        <h4 className="font-bold text-gray-900 text-lg">{donation.name}</h4>
-                        <span className="text-2xl font-bold text-green-600">${donation.amount}</span>
-                      </div>
-                      <p className="text-gray-600 text-sm mb-3 italic">"{donation.reason}"</p>
-                      <p className="text-xs text-gray-500 font-medium">{donation.date}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Dialogs */}
+      <CreateBlogDialog open={showCreateBlog} onOpenChange={setShowCreateBlog} onCreateBlog={handleCreateBlog} />
+      <CreateProgramDialog
+        open={showCreateProgram}
+        onOpenChange={setShowCreateProgram}
+        onCreateProgram={handleCreateProgram}
+      />
     </div>
   )
 }

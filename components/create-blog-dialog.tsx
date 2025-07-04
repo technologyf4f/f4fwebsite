@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -15,7 +15,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Upload, X, Calendar } from "lucide-react"
+import { getBlogCategories, type BlogCategory } from "@/lib/blogs-api"
 
 interface CreateBlogDialogProps {
   open: boolean
@@ -26,6 +28,7 @@ interface CreateBlogDialogProps {
       content: string
       date: string
       author: string
+      category_id?: string
     },
     imageFile?: File,
   ) => void
@@ -37,8 +40,26 @@ export function CreateBlogDialog({ open, onOpenChange, onCreateBlog }: CreateBlo
   const [date, setDate] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [author, setAuthor] = useState("")
+  const [categoryId, setCategoryId] = useState("none")
+  const [categories, setCategories] = useState<BlogCategory[]>([])
   const [password, setPassword] = useState("")
   const [passwordError, setPasswordError] = useState(false)
+
+  // Load categories when dialog opens
+  useEffect(() => {
+    if (open) {
+      loadCategories()
+    }
+  }, [open])
+
+  const loadCategories = async () => {
+    try {
+      const categoriesData = await getBlogCategories()
+      setCategories(categoriesData)
+    } catch (error) {
+      console.error("Failed to load categories:", error)
+    }
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -59,6 +80,7 @@ export function CreateBlogDialog({ open, onOpenChange, onCreateBlog }: CreateBlo
         content: content.trim(),
         date: date.trim(),
         author: author.trim(),
+        category_id: categoryId === "none" ? undefined : categoryId,
       },
       imageFile || undefined,
     )
@@ -69,6 +91,7 @@ export function CreateBlogDialog({ open, onOpenChange, onCreateBlog }: CreateBlo
     setDate("")
     setImageFile(null)
     setAuthor("")
+    setCategoryId("none")
     setPassword("")
     setPasswordError(false)
   }
@@ -105,15 +128,31 @@ export function CreateBlogDialog({ open, onOpenChange, onCreateBlog }: CreateBlo
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="content">Content</Label>
-              <Textarea
-                id="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Write your blog post content here..."
-                rows={8}
+              <Label htmlFor="author">Author Name</Label>
+              <Input
+                id="author"
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+                placeholder="Your name"
                 required
               />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="category">Category</Label>
+              <Select value={categoryId} onValueChange={setCategoryId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No Category</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="grid gap-2">
@@ -132,12 +171,13 @@ export function CreateBlogDialog({ open, onOpenChange, onCreateBlog }: CreateBlo
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="author">Author Name</Label>
-              <Input
-                id="author"
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-                placeholder="Your name"
+              <Label htmlFor="content">Content</Label>
+              <Textarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Write your blog post content here..."
+                rows={8}
                 required
               />
             </div>

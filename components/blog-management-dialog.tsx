@@ -15,8 +15,18 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Edit, Trash2, Plus, Save, DeleteIcon as Cancel, Loader2, Calendar, Upload, X } from "lucide-react"
-import { getBlogs, createBlog, updateBlog, deleteBlog, type Blog } from "@/lib/blogs-api"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
+import { Edit, Trash2, Plus, Save, DeleteIcon as Cancel, Loader2, Calendar, Upload, X, Tag } from "lucide-react"
+import {
+  getBlogs,
+  createBlog,
+  updateBlog,
+  deleteBlog,
+  getBlogCategories,
+  type Blog,
+  type BlogCategory,
+} from "@/lib/blogs-api"
 
 interface BlogManagementDialogProps {
   open: boolean
@@ -26,6 +36,7 @@ interface BlogManagementDialogProps {
 
 export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: BlogManagementDialogProps) {
   const [blogs, setBlogs] = useState<Blog[]>([])
+  const [categories, setCategories] = useState<BlogCategory[]>([])
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null)
   const [isCreating, setIsCreating] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -36,12 +47,14 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
     content: "",
     date: "",
     author: "",
+    category_id: "default", // Updated default value to be a non-empty string
   })
 
-  // Load blogs when dialog opens
+  // Load blogs and categories when dialog opens
   useEffect(() => {
     if (open) {
       loadBlogs()
+      loadCategories()
     }
   }, [open])
 
@@ -58,12 +71,22 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
     }
   }
 
+  const loadCategories = async () => {
+    try {
+      const categoriesData = await getBlogCategories()
+      setCategories(categoriesData)
+    } catch (error) {
+      console.error("Failed to load categories:", error)
+    }
+  }
+
   const resetForm = () => {
     setFormData({
       title: "",
       content: "",
       date: "",
       author: "",
+      category_id: "default", // Updated default value to be a non-empty string
     })
     setImageFile(null)
   }
@@ -81,6 +104,7 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
       content: blog.content,
       date: blog.date || "",
       author: blog.author,
+      category_id: blog.category_id || "default", // Updated default value to be a non-empty string
     })
     setImageFile(null)
     setIsCreating(false)
@@ -123,6 +147,7 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
         content: formData.content.trim(),
         date: formData.date.trim(),
         author: formData.author.trim(),
+        category_id: formData.category_id || undefined,
       }
 
       if (isCreating) {
@@ -203,7 +228,15 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
                       <CardHeader className="pb-3">
                         <div className="flex justify-between items-start">
                           <div className="flex-1">
-                            <CardTitle className="text-lg">{blog.title}</CardTitle>
+                            <div className="flex items-center gap-2 mb-2">
+                              <CardTitle className="text-lg">{blog.title}</CardTitle>
+                              {blog.category && (
+                                <Badge className="bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 border-0 rounded-full px-2 py-1 text-xs font-semibold">
+                                  <Tag className="h-3 w-3 mr-1" />
+                                  {blog.category.name}
+                                </Badge>
+                              )}
+                            </div>
                             <div className="flex items-center gap-4 text-sm text-gray-500 mt-2">
                               <span>By {blog.author}</span>
                               <span>{formatDateForDisplay(blog.date)}</span>
@@ -262,6 +295,28 @@ export function BlogManagementDialog({ open, onOpenChange, onBlogsChange }: Blog
                     required
                     disabled={isSaving}
                   />
+                </div>
+
+                <div>
+                  <Label htmlFor="category">Category</Label>
+                  <Select
+                    value={formData.category_id}
+                    onValueChange={(value) => setFormData({ ...formData, category_id: value })}
+                    disabled={isSaving}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="default">No Category</SelectItem>{" "}
+                      {/* Updated value prop to be a non-empty string */}
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div>
