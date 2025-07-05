@@ -10,7 +10,7 @@ export function Footer() {
           {/* Organization Info */}
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
-              <Image src="/f4f-logo.png" alt="Framework 4 Future Logo" width={48} height={48} className="rounded-xl" />
+              <Image src="/f4f-logo.png" alt="Framework 4 Future Logo" width={128} height={128} className="rounded-xl" />
               <span className="text-2xl font-bold">Framework 4 Future</span>
             </div>
             <p className="text-gray-300 text-base leading-relaxed">

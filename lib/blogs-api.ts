@@ -70,9 +70,9 @@ export async function getBlogCategories(): Promise<BlogCategory[]> {
 
   try {
     const { data, error } = await supabase!
-      .from("blogCategories")
-      .select("id, name, description, created_at")
-      .order("name", { ascending: true })
+      .from("blog_categories")
+      .select("*")
+      // .order("name", { ascending: true })
     if (error) throw error
     return data ?? []
   } catch (err) {

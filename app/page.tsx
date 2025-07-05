@@ -189,12 +189,14 @@ export default function HomePage() {
       
 
       {/* Dialogs */}
+      {/*
       <CreateBlogDialog open={showCreateBlog} onOpenChange={setShowCreateBlog} onCreateBlog={handleCreateBlog} />
       <CreateProgramDialog
         open={showCreateEvent}
         onOpenChange={setShowCreateEvent}
         onCreateProgram={handleCreateEvent}
       />
+      */}
     </div>
   )
 }

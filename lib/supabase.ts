@@ -30,14 +30,14 @@ export interface Blog {
   image: string
   author: string
   date: string
-  category_id?: string
+  category_id?: number
   category?: BlogCategory
   created_at?: string
   updated_at?: string
 }
 
 export interface BlogCategory {
-  id: string
+  id: number
   name: string
   description?: string
   created_at?: string

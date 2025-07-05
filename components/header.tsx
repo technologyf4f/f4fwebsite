@@ -10,7 +10,6 @@ import { EventManagementDialog } from "@/components/event-management-dialog"
 import { getEvents } from "@/lib/events-api"
 import { getBlogs } from "@/lib/blogs-api"
 import { isSupabaseConfigured } from "@/lib/supabase"
-import { SupabaseSetupGuide } from "@/components/supabase-setup-guide"
 
 // Inline UI Components
 const Button = ({
@@ -204,20 +203,6 @@ export function Header() {
         </div>
       )}
 
-      {/* Setup Guide Modal */}
-      {showSetupGuide && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="sticky top-0 bg-white border-b border-gray-100 p-6 flex justify-between items-center rounded-t-2xl">
-              <h2 className="text-2xl font-bold text-gray-900">Supabase Setup Guide</h2>
-              <Button variant="ghost" onClick={() => setShowSetupGuide(false)} className="rounded-full">
-                ✕
-              </Button>
-            </div>
-            <SupabaseSetupGuide />
-          </div>
-        </div>
-      )}
 
       {/* Header */}
       <header className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur-md z-50 shadow-sm">
