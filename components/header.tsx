@@ -10,6 +10,9 @@ import { EventManagementDialog } from "@/components/event-management-dialog"
 import { getEvents } from "@/lib/events-api"
 import { getBlogs } from "@/lib/blogs-api"
 import { isSupabaseConfigured } from "@/lib/supabase"
+import { VolunteeringManagementDialog } from "@/components/volunteering-management-dialog"
+import { MemberDashboard } from "@/components/member-dashboard"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 
 // Inline UI Components
 const Button = ({
@@ -96,6 +99,10 @@ export function Header() {
   const [showAdminMenu, setShowAdminMenu] = useState(false)
   const [showBlogManagement, setShowBlogManagement] = useState(false)
   const [showEventManagement, setShowEventManagement] = useState(false)
+  const [showMemberDashboard, setShowMemberDashboard] = useState(false)
+  const [showVolunteeringManagement, setShowVolunteeringManagement] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [memberId, setMemberId] = useState("")
 
   useEffect(() => {
     // Check if Supabase is configured
@@ -135,14 +142,18 @@ export function Header() {
     }
   }
 
-  const handleLogin = (username: string) => {
+  const handleLogin = (username: string, adminStatus = false, memberIdValue = "") => {
     setIsLoggedIn(true)
     setCurrentUser(username)
+    setIsAdmin(adminStatus)
+    setMemberId(memberIdValue)
   }
 
   const handleLogout = () => {
     setIsLoggedIn(false)
     setCurrentUser("")
+    setIsAdmin(false)
+    setMemberId("")
   }
 
   const handleManageBlogs = () => {
@@ -202,7 +213,6 @@ export function Header() {
           </div>
         </div>
       )}
-
 
       {/* Header */}
       <header className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur-md z-50 shadow-sm">
@@ -305,47 +315,90 @@ export function Header() {
                           <UserCircle className="h-5 w-5 text-indigo-600" />
                           <div className="flex flex-col">
                             <span className="text-sm font-semibold text-gray-900">Welcome back!</span>
-                            <span className="text-xs text-gray-600">{currentUser}</span>
+                            <span className="text-xs text-gray-600">
+                              {currentUser} {isAdmin && "(Admin)"}
+                            </span>
                           </div>
                         </div>
                       </div>
                       <div className="py-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setShowAdminMenu(false)
-                            handleManageBlogs()
-                          }}
-                          className="flex items-center gap-3 w-full px-6 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors font-medium"
-                        >
-                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                            />
-                          </svg>
-                          <span>Manage Blogs</span>
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setShowAdminMenu(false)
-                            handleManageEvents()
-                          }}
-                          className="flex items-center gap-3 w-full px-6 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors font-medium"
-                        >
-                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                            />
-                          </svg>
-                          <span>Manage Events</span>
-                        </button>
+                        {isAdmin ? (
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setShowAdminMenu(false)
+                                handleManageBlogs()
+                              }}
+                              className="flex items-center gap-3 w-full px-6 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors font-medium"
+                            >
+                              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                              </svg>
+                              <span>Manage Blogs</span>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setShowAdminMenu(false)
+                                handleManageEvents()
+                              }}
+                              className="flex items-center gap-3 w-full px-6 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors font-medium"
+                            >
+                              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                              </svg>
+                              <span>Manage Events</span>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setShowAdminMenu(false)
+                                setShowVolunteeringManagement(true)
+                              }}
+                              className="flex items-center gap-3 w-full px-6 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors font-medium"
+                            >
+                              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                                />
+                              </svg>
+                              <span>Manage Volunteering</span>
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setShowAdminMenu(false)
+                              setShowMemberDashboard(true)
+                            }}
+                            className="flex items-center gap-3 w-full px-6 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors font-medium"
+                          >
+                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                              />
+                            </svg>
+                            <span>My Dashboard</span>
+                          </button>
+                        )}
                       </div>
                       <div className="border-t border-gray-100">
                         <button
@@ -397,6 +450,17 @@ export function Header() {
         onOpenChange={setShowEventManagement}
         onEventsChange={loadPrograms}
       />
+      <VolunteeringManagementDialog
+        open={showVolunteeringManagement}
+        onOpenChange={setShowVolunteeringManagement}
+        currentUser={currentUser}
+      />
+
+      <Dialog open={showMemberDashboard} onOpenChange={setShowMemberDashboard}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <MemberDashboard memberId={memberId} memberName={currentUser} />
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
