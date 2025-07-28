@@ -30,7 +30,7 @@ export interface VolunteeringHours {
   member_id: string
   activity_name: string
   description?: string
-  hours_completed: number
+  hours_worked: number
   activity_date: string
   organization_name: string
   supervisor_name?: string
@@ -52,7 +52,7 @@ export interface VolunteeringHours {
 export interface VolunteeringSubmission {
   activity_name: string
   description?: string
-  hours_completed: number
+  hours_worked: number
   activity_date: string
   organization_name: string
   supervisor_name?: string

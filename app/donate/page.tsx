@@ -84,63 +84,7 @@ export default function DonatePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="border-b bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center">
-              <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-red-600 flex items-center justify-center rounded">
-                  <div className="w-6 h-6 border-2 border-white"></div>
-                </div>
-                <div className="text-sm font-bold text-gray-900">
-                  <div>FRAMEWORK</div>
-                  <div>4 FUTURE</div>
-                </div>
-              </div>
-            </Link>
-
-            <nav className="hidden lg:flex items-center space-x-8 ml-16">
-              <Link href="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                About Us
-              </Link>
-              <Link href="/programs" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                Programs
-              </Link>
-              <Link href="/blogs" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                Blogs
-              </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                Contact Us
-              </Link>
-            </nav>
-
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <UserCircle className="h-6 w-6" />
-                <span className="sr-only">User account</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Donate Header */}
-      <section className="bg-white border-b">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/">
-                <ArrowLeft className="h-5 w-5" />
-              </Link>
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Support Our Mission</h1>
-              <p className="text-gray-600 mt-2">Help us empower the next generation of leaders</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Header */}           
 
       {/* Impact Stats */}
       <section className="bg-indigo-700 text-white">
@@ -168,7 +112,7 @@ export default function DonatePage() {
       {/* Main Content */}
       <section className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-1 gap-12">
             {/* Donation Form */}
             <div>
               <Card>
@@ -250,40 +194,13 @@ export default function DonatePage() {
               </Card>
 
               <div className="mt-6 bg-green-50 rounded-lg p-6">
-                <h3 className="font-semibold text-gray-900 mb-2">Your Impact</h3>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• $25 provides leadership materials for one youth</li>
-                  <li>• $50 sponsors a youth for a community service project</li>
-                  <li>• $100 funds a leadership workshop for 10 participants</li>
-                  <li>• $250 supports a full leadership development program</li>
-                </ul>
+                <h2 className="font-semibold text-gray-900 mb-2">Tax Information: Framework For Future is exempt from federal income taxes under Section 501(C)(3) of the Internal Revenue Code. Therefore, your gift is tax-deductible to the full extent provided by law. Our federal tax identification number is 82-1614145. You should consult your financial planner or tax adviser to determine the exact tax advantages of any gift you are considering.</h2>                
               </div>
             </div>
 
             {/* Recent Donations */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Recent Donations</h2>
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {donations.map((donation) => (
-                  <Card key={donation.id}>
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-gray-900">{donation.name}</h3>
-                        <span className="text-lg font-bold text-green-600">${donation.amount}</span>
-                      </div>
-                      <p className="text-gray-600 text-sm mb-2">"{donation.reason}"</p>
-                      <p className="text-xs text-gray-500">{donation.date}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {donations.length === 0 && (
-                <div className="text-center py-8">
-                  <Heart className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500">Be the first to make a donation!</p>
-                </div>
-              )}
+            <div>            
+              
             </div>
           </div>
         </div>

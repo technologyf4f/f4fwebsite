@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { supabase, isSupabaseConfigured, type Blog, type BlogCategory } from "@/lib/supabase"
 
 // Use service-role key for server-side operations
-const supabaseAdmin =
-  process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
-    ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
-    : null
-
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as {
@@ -33,7 +29,7 @@ export async function POST(req: Request) {
     }
 
     // If Supabase is not configured, return mock data
-    if (!supabaseAdmin) {
+    if (!isSupabaseConfigured) {
       console.log("Supabase not configured, returning mock member data")
       return NextResponse.json({
         success: true,
@@ -58,7 +54,7 @@ export async function POST(req: Request) {
     // Simple demo hash – replace with bcrypt in production
     const password_hash = Buffer.from(body.password + "framework4future_salt").toString("base64")
 
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from("members")
       .insert([
         {

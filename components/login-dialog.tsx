@@ -147,18 +147,6 @@ export function LoginDialog({ open, onOpenChange, onLogin }: LoginDialogProps) {
                       {isLoading ? "Signing In..." : "Sign In"}
                     </Button>
                   </form>
-
-                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-semibold text-blue-900 mb-2">Demo Credentials:</h4>
-                    <div className="text-sm text-blue-800 space-y-1">
-                      <p>
-                        <strong>Admin:</strong> admin@framework4future.org / admin123
-                      </p>
-                      <p>
-                        <strong>Member:</strong> member@test.com / member123
-                      </p>
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -170,15 +158,8 @@ export function LoginDialog({ open, onOpenChange, onLogin }: LoginDialogProps) {
                     <User className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle className="flex items-center justify-center gap-2">
-                    Create Account
-                    <Badge className="bg-orange-500 text-white flex items-center gap-1">
-                      <DollarSign className="h-3 w-3" />
-                      $30
-                    </Badge>
+                    Create Account                    
                   </CardTitle>
-                  <CardDescription>
-                    Join our community of young leaders - Lifetime membership for just $30
-                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -187,7 +168,7 @@ export function LoginDialog({ open, onOpenChange, onLogin }: LoginDialogProps) {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-semibold text-orange-800">Lifetime Membership</p>
-                          <p className="text-sm text-orange-600">One-time payment • Full access to all features</p>
+                          <p className="text-sm text-orange-600">One-time payment</p>
                         </div>
                         <div className="text-right">
                           <p className="text-2xl font-bold text-orange-600">$30</p>
@@ -199,13 +180,11 @@ export function LoginDialog({ open, onOpenChange, onLogin }: LoginDialogProps) {
                     <div className="space-y-3">
                       <h4 className="font-semibold text-gray-900">What's Included:</h4>
                       <ul className="text-sm text-gray-700 space-y-1">
-                        <li>• Community access and networking</li>
-                        <li>• Leadership training programs</li>
+                        <li>• Community volunteering and networking</li>
+                        <li>• Exclusive Leadership training programs</li>
                         <li>• Exclusive events and workshops</li>
                         <li>• Mentorship opportunities</li>
-                        <li>• Career development resources</li>
-                        <li>• Volunteering hours tracking</li>
-                        <li>. Test</li>
+                        <li>• Career development resources</li>                        
                       </ul>
                     </div>
 

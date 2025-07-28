@@ -23,7 +23,7 @@ export function VolunteeringHoursDialog({ open, onOpenChange, memberId, onSubmit
   const [formData, setFormData] = useState({
     activity_name: "",
     description: "",
-    hours_completed: "",
+    hours_worked: "",
     activity_date: "",
     organization_name: "",
     supervisor_name: "",
@@ -41,7 +41,7 @@ export function VolunteeringHoursDialog({ open, onOpenChange, memberId, onSubmit
     // Validate required fields
     if (
       !formData.activity_name ||
-      !formData.hours_completed ||
+      !formData.hours_worked ||
       !formData.activity_date ||
       !formData.organization_name
     ) {
@@ -51,9 +51,9 @@ export function VolunteeringHoursDialog({ open, onOpenChange, memberId, onSubmit
     }
 
     // Validate hours
-    const hours = Number.parseFloat(formData.hours_completed)
+    const hours = Number.parseFloat(formData.hours_worked)
     if (isNaN(hours) || hours <= 0) {
-      setError("Hours completed must be a positive number")
+      setError("Hours worked must be a positive number")
       setIsSubmitting(false)
       return
     }
@@ -67,7 +67,7 @@ export function VolunteeringHoursDialog({ open, onOpenChange, memberId, onSubmit
         body: JSON.stringify({
           memberId,
           ...formData,
-          hours_completed: hours,
+          hours_worked: hours,
         }),
       })
 
@@ -83,7 +83,7 @@ export function VolunteeringHoursDialog({ open, onOpenChange, memberId, onSubmit
       setFormData({
         activity_name: "",
         description: "",
-        hours_completed: "",
+        hours_worked: "",
         activity_date: "",
         organization_name: "",
         supervisor_name: "",
@@ -150,17 +150,17 @@ export function VolunteeringHoursDialog({ open, onOpenChange, memberId, onSubmit
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="hours_completed" className="flex items-center gap-2">
+                  <Label htmlFor="hours_worked" className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
-                    Hours Completed *
+                    Hours Worked *
                   </Label>
                   <Input
-                    id="hours_completed"
+                    id="hours_worked"
                     type="number"
                     step="0.5"
                     min="0.5"
-                    value={formData.hours_completed}
-                    onChange={(e) => handleInputChange("hours_completed", e.target.value)}
+                    value={formData.hours_worked}
+                    onChange={(e) => handleInputChange("hours_worked", e.target.value)}
                     placeholder="e.g., 4.5"
                     required
                     disabled={isSubmitting}

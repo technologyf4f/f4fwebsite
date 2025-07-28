@@ -82,8 +82,7 @@ export async function getBlogCategories(): Promise<BlogCategory[]> {
 }
 
 /* ------------------------- BLOG CRUD METHODS ------------------------- */
-export async function getBlogs(categoryId?: string): Promise<Blog[]> {  
-  debugger;
+export async function getBlogs(categoryId?: string): Promise<Blog[]> {    
   if (!isSupabaseConfigured()) {
     return categoryId ? localBlogs.filter((blog) => blog.category_id === categoryId) : localBlogs
   }

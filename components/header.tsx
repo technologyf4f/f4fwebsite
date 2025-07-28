@@ -3,6 +3,7 @@ import type { ReactNode } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation";
 
 import { LoginDialog } from "@/components/login-dialog"
 import { BlogManagementDialog } from "@/components/blog-management-dialog"
@@ -103,6 +104,8 @@ export function Header() {
   const [showVolunteeringManagement, setShowVolunteeringManagement] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [memberId, setMemberId] = useState("")
+
+  const router = useRouter();
 
   useEffect(() => {
     // Check if Supabase is configured
@@ -257,12 +260,12 @@ export function Header() {
                     >
                       Who We Are
                     </Link>
-                    <button
-                      onClick={() => scrollToSection("about")}
+                    <Link
+                      href="/who-we-are"
                       className="block w-full text-left px-6 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors font-medium"
                     >
                       Our Team
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -288,7 +291,7 @@ export function Header() {
 
             <div className="flex items-center gap-3">
               <Button
-                onClick={() => scrollToSection("donate")}
+                onClick={() => router.push("/donate")}
                 variant="default"
                 size="sm"
                 className="hidden lg:inline-flex bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
