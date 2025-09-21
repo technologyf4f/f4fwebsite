@@ -59,3 +59,19 @@ export interface VolunteeringSubmission {
   supervisor_email?: string
   supervisor_phone?: string
 }
+
+export interface TeamMember {
+  id: string
+  first_name: string
+  last_name: string
+  title: string
+  category: "youth_leader" | "executive_member" | "board_director"
+  headshot_url?: string
+  bio?: string
+  email?: string
+  linkedin_url?: string
+  display_order: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
