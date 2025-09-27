@@ -87,23 +87,14 @@ export default function DonatePage() {
       {/* Header */}           
 
       {/* Impact Stats */}
-      <section className="bg-indigo-700 text-white">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div className="flex flex-col items-center">
-              <Heart className="h-12 w-12 mb-4" />
-              <div className="text-3xl font-bold mb-2">${totalDonations.toLocaleString()}</div>
-              <div className="text-indigo-200">Total Raised</div>
-            </div>
-            <div className="flex flex-col items-center">
-              <Users className="h-12 w-12 mb-4" />
-              <div className="text-3xl font-bold mb-2">{donations.length}</div>
-              <div className="text-indigo-200">Generous Donors</div>
-            </div>
-            <div className="flex flex-col items-center">
-              <Target className="h-12 w-12 mb-4" />
-              <div className="text-3xl font-bold mb-2">500+</div>
-              <div className="text-indigo-200">Youth Impacted</div>
+     <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+        <div className="container mx-auto px-6 py-16">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              <div>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">Donate</h1>
+                <p className="text-indigo-100 text-lg">Support our mission</p>
+              </div>
             </div>
           </div>
         </div>

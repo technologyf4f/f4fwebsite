@@ -73,13 +73,17 @@ export default function BlogsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-6">Our Blog</h1>
-          <p className="text-xl max-w-3xl mx-auto opacity-90">
-            Explore stories, insights, and updates from our community of young leaders who are making a positive impact
-            in their communities and beyond.
-          </p>
+      <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+        <div className="container mx-auto px-6 py-16">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              <div>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">Blogs</h1>
+                <p className="text-indigo-100 text-lg"> Explore stories, insights, and updates from our community of young leaders who are making a positive impact
+            in their communities and beyond.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

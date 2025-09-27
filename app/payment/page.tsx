@@ -192,7 +192,7 @@ export default function PaymentPage() {
                             <li>Open your mobile banking app or Zelle app</li>
                             <li>Select "Send Money" or "Pay with Zelle"</li>
                             <li>
-                              Enter recipient email: <strong>framework4future@gmail.com</strong>
+                              Enter recipient email: <strong>executivecommittee@framework4future.org</strong>
                             </li>
                             <li>
                               Enter amount: <strong>$30.00</strong>

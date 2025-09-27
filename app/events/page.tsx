@@ -39,17 +39,10 @@ export default function EventsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
               <div>
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Events</h1>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">Events</h1>
                 <p className="text-indigo-100 text-lg">Empowering youth through leadership and community engagement</p>
               </div>
             </div>
-            <Button
-              onClick={() => setIsCreateDialogOpen(true)}
-              className="bg-white text-indigo-600 hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl font-semibold"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Create Event
-            </Button>
           </div>
         </div>
       </section>

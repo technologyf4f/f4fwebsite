@@ -158,7 +158,8 @@ export async function getAllVolunteeringHours(): Promise<{
       .from("volunteering_hours")
       .select(`
         *,
-        member:members(first_name, last_name, email)
+        member:members!volunteering_hours_member_id_fkey(first_name, last_name, email),
+        approving_member:members!volunteering_hours_approved_by_fkey(first_name, last_name, email)
       `)
       .order("created_at", { ascending: false })
 
@@ -191,8 +192,8 @@ export async function updateVolunteeringHoursStatus(
       .update({
         status,
         admin_notes: adminNotes,
-        reviewed_by: reviewedBy,
-        reviewed_at: new Date().toISOString(),
+        approved_by: reviewedBy,
+        approved_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)

@@ -10,6 +10,7 @@ import { Loader2, Filter } from "lucide-react"
 
 interface BlogsSectionProps {
   limit?: number
+  showMoreButton?: boolean
   showViewAll?: boolean
   showCategoryFilter?: boolean
 }
@@ -59,8 +60,8 @@ export function BlogsSection({ limit, showMoreButton = false, showViewAll = fals
     <div>
       {/* Section Header */}
       <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-          Our Blogs
+        <h2 className="pb-2 text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          Blogs
         </h2>
         <p className="text-gray-600 text-lg">Discover insights, stories, and updates from our community of young leaders making a difference.</p>
         <div className="h-1 w-32 bg-gradient-to-r from-indigo-600 to-purple-600 mx-auto mt-8 rounded-full"></div>
@@ -99,11 +100,9 @@ export function BlogsSection({ limit, showMoreButton = false, showViewAll = fals
                 </Button>
               </div>
             )}
-          </>
-      )}
 
-      {/* More Button */}
-      
+          {/* More Button */}
+          {showMoreButton && blogs.length > 0 && (
             <div className="text-center">
               <Button
                 onClick={handleViewMore}
@@ -111,7 +110,10 @@ export function BlogsSection({ limit, showMoreButton = false, showViewAll = fals
               >
                 View All Blogs
               </Button>
-            </div>      
+            </div>
+          )}
+          </>
+      )} 
     </div>
   )
 }

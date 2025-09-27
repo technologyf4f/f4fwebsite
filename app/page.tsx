@@ -11,10 +11,12 @@ import { EventsSection } from "@/components/events-section"
 import { createBlog } from "@/lib/blogs-api"
 import { createEvent } from "@/lib/events-api"
 import { Users, Heart, Target, Award, ArrowRight, BookOpen, Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function HomePage() {
   const [showCreateBlog, setShowCreateBlog] = useState(false)
   const [showCreateEvent, setShowCreateEvent] = useState(false)
+  const router = useRouter()
 
   const handleCreateBlog = async (
     blog: {
@@ -77,13 +79,15 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Button
                 size="lg"
+                onClick={() => { router.push("/register") }}
                 className="bg-white text-indigo-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                Get Involved
+                Join Our Community
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button
                 size="lg"
+                onClick={() => { router.push("/our-story") }}
                 variant="outline"
                 className="border-white text-white hover:bg-white hover:text-indigo-600 px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-transparent"
               >
@@ -99,7 +103,7 @@ export default function HomePage() {
       <section id="about" className="container mx-auto px-6 py-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <h2 className="pb-2 text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Founder's Message
             </h2>
             <p className="text-gray-600 text-lg">Learn more about our mission and impact</p>
@@ -171,6 +175,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Button
               size="lg"
+              onClick={() => { router.push("/register") }}
               className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
             >
               Join Our Community
@@ -179,9 +184,10 @@ export default function HomePage() {
             <Button
               size="lg"
               variant="outline"
+              onClick={() => { router.push("/our-story") }}
               className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-transparent"
             >
-              Learn More About Us
+              Learn More
             </Button>
           </div>
         </div>

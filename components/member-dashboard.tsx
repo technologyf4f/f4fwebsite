@@ -90,7 +90,7 @@ export function MemberDashboard({ memberId, memberName }: MemberDashboardProps) 
 
   // Calculate statistics
   const totalHours = volunteeringHours.reduce((sum, entry) => {
-    return entry.status === "approved" ? sum + entry.hours_completed : sum
+    return entry.status === "approved" ? sum + entry.hours_worked : sum
   }, 0)
 
   const pendingHours = volunteeringHours.filter((entry) => entry.status === "pending").length
@@ -151,7 +151,7 @@ export function MemberDashboard({ memberId, memberName }: MemberDashboardProps) 
           <h2 className="text-3xl font-bold tracking-tight">Welcome, {memberName}!</h2>
           <p className="text-muted-foreground">Track your volunteering hours and community impact</p>
         </div>
-        <Button onClick={() => setShowSubmitDialog(true)} className="flex items-center gap-2">
+        <Button onClick={() => setShowSubmitDialog(true)} className="flex items-center mr-10 gap-1">
           <Plus className="h-4 w-4" />
           Submit Hours
         </Button>
@@ -242,7 +242,7 @@ export function MemberDashboard({ memberId, memberName }: MemberDashboardProps) 
                         <p className="text-sm text-muted-foreground mb-2">{entry.description}</p>
                       </div>
                       <div className="text-right">
-                        <div className="text-lg font-bold">{entry.hours_completed}h</div>
+                        <div className="text-lg font-bold">{entry.hours_worked}h</div>
                         <div className="text-xs text-muted-foreground">
                           {new Date(entry.activity_date).toLocaleDateString()}
                         </div>

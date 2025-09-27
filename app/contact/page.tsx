@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -5,17 +7,27 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { UserCircle, ArrowLeft, Mail } from "lucide-react"
+import { toast } from "@/hooks/use-toast"
 
 export default function ContactPage() {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    alert("Thank you for your message! We'll get back to you soon. Alternatively, you can reach out to us on WhatsApp Group or send an email to executivecommittee@framework4future.org.");
+    // Optionally, reset the form
+    e.currentTarget.reset();
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       
-      <section className="bg-white border-b">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center gap-4">            
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Contact</h1>
-              <p className="text-gray-600 mt-2">Get in touch with our team</p>
+      <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+        <div className="container mx-auto px-6 py-16">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              <div>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
+                <p className="text-indigo-100 text-lg">Get in touch with our team</p>
+              </div>
             </div>
           </div>
         </div>
@@ -38,8 +50,8 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">Email</h3>
-                        <a href="mailto:framework4future@gmail.com" className="text-green-600 hover:text-green-800">
-                          framework4future@gmail.com
+                        <a href="mailto:executivecommittee@framework4future.org" className="text-green-600 hover:text-green-800">
+                          executivecommittee@framework4future.org
                         </a>
                       </div>
                     </div>
@@ -56,8 +68,8 @@ export default function ContactPage() {
                   <Button asChild className="bg-indigo-700 hover:bg-indigo-800">
                     <Link href="/events">View Events</Link>
                   </Button>
-                  <Button asChild variant="outline">
-                    <Link href="/donate">Support Our Mission</Link>
+                  <Button asChild className="bg-indigo-700 hover:bg-indigo-800">
+                    <Link href="/register">Join Our Community</Link>
                   </Button>
                 </div>
               </div>
@@ -70,7 +82,7 @@ export default function ContactPage() {
                   <CardTitle>Send us a Message</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <form className="space-y-6">
+                  <form className="space-y-6" onSubmit={handleSubmit}>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="firstName">First Name</Label>

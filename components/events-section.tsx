@@ -16,7 +16,7 @@ interface EventsSectionProps {
 export function EventsSection({
   limit,
   showMoreButton = false,
-  title = "Our Events",
+  title = "Events",
   description = "Empowering youth through leadership and community engagement events",
 }: EventsSectionProps) {
   const [events, setEvents] = useState<Event[]>([])

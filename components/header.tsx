@@ -261,7 +261,7 @@ export function Header() {
                       Who We Are
                     </Link>
                     <Link
-                      href="/who-we-are"
+                      href="/our-team"
                       className="block w-full text-left px-6 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors font-medium"
                     >
                       Our Team
@@ -301,11 +301,12 @@ export function Header() {
               {isLoggedIn ? (
                 <div className="relative admin-menu-container">
                   <Button
-                    variant="ghost"
-                    className="flex items-center gap-3 rounded-full h-11 px-4 border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50"
+                    variant="default"
+                    size="sm"
+                    className="hidden lg:inline-flex bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
                     onClick={() => setShowAdminMenu(!showAdminMenu)}
                   >
-                    <UserCircle className="h-5 w-5" />
+                    {!currentUser && <UserCircle className="h-5 w-5" />}
                     <span className="hidden sm:inline text-sm font-semibold">{currentUser}</span>
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -399,7 +400,7 @@ export function Header() {
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                               />
                             </svg>
-                            <span>My Dashboard</span>
+                            <span>Volunteering Hours</span>
                           </button>
                         )}
                       </div>
@@ -456,7 +457,7 @@ export function Header() {
       <VolunteeringManagementDialog
         open={showVolunteeringManagement}
         onOpenChange={setShowVolunteeringManagement}
-        currentUser={currentUser}
+        currentUser={memberId}
       />
 
       <Dialog open={showMemberDashboard} onOpenChange={setShowMemberDashboard}>

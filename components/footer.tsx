@@ -88,10 +88,10 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/who-we-are"
                   className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
                 >
-                  About Us
+                  Who We Are
                 </Link>
               </li>
               <li>
@@ -110,14 +110,14 @@ export function Footer() {
                   Blogs
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   href="/gallery"
                   className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
                 >
                   Gallery
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 
@@ -135,7 +135,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  href="/events"
                   className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
                 >
                   Volunteer
@@ -151,18 +151,10 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/feedback"
+                  href="/register"
                   className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
                 >
-                  Feedback
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-gray-300 hover:text-white transition-colors text-base font-medium hover:translate-x-1 transform duration-200 block"
-                >
-                  Join Our Team
+                  Join Our Community
                 </Link>
               </li>
             </ul>
@@ -183,10 +175,10 @@ export function Footer() {
               <div className="flex items-center space-x-4">
                 <Mail size={20} className="text-indigo-400 flex-shrink-0" />
                 <a
-                  href="mailto:framework4future@gmail.com"
+                  href="mailto:executivecommittee@framework4future.org"
                   className="text-gray-300 hover:text-white transition-colors text-base font-medium"
                 >
-                  framework4future@gmail.com
+                  executivecommittee@framework4future.org
                 </a>
               </div>
             </div>
@@ -199,7 +191,7 @@ export function Footer() {
             <div className="text-gray-400 text-base">
               © {new Date().getFullYear()} Framework 4 Future. All rights reserved.
             </div>
-            <div className="flex space-x-8">
+            {/* <div className="flex space-x-8">
               <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors text-base font-medium">
                 Privacy Policy
               </Link>
@@ -212,7 +204,7 @@ export function Footer() {
               >
                 Accessibility
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -150,7 +150,7 @@ export function VolunteeringManagementDialog({ open, onOpenChange, currentUser }
   const approvedCount = volunteeringHours.filter((h) => h.status === "approved").length
   const totalHours = volunteeringHours
     .filter((h) => h.status === "approved")
-    .reduce((sum, h) => sum + h.hours_completed, 0)
+    .reduce((sum, h) => sum + h.hours_worked, 0)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -188,7 +188,7 @@ export function VolunteeringManagementDialog({ open, onOpenChange, currentUser }
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium">Total Hours</span>
+                    <span className="text-sm font-medium">Total Approved Hours</span>
                   </div>
                   <div className="text-2xl font-bold">{totalHours}</div>
                 </CardContent>
@@ -244,7 +244,7 @@ export function VolunteeringManagementDialog({ open, onOpenChange, currentUser }
                               </p>
                             </div>
                             <div className="text-right">
-                              <div className="text-lg font-bold">{entry.hours_completed}h</div>
+                              <div className="text-lg font-bold">{entry.hours_worked}h</div>
                               <div className="text-xs text-muted-foreground">
                                 {new Date(entry.activity_date).toLocaleDateString()}
                               </div>
@@ -291,7 +291,7 @@ export function VolunteeringManagementDialog({ open, onOpenChange, currentUser }
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span>{selectedEntry.hours_completed} hours</span>
+                      <span>{selectedEntry.hours_worked} hours</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />

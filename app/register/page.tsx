@@ -210,17 +210,6 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-6 py-4">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Home
-          </Link>
-        </div>
-      </div>
 
       <div className="container mx-auto px-6 py-12">
         <div className="max-w-4xl mx-auto">
@@ -555,36 +544,8 @@ export default function RegisterPage() {
                           </div>
                         </div>
 
-                        {/* PayPal Option */}
-                        <div className="relative">
-                          <div
-                            className={`border-2 rounded-lg p-6 cursor-pointer transition-all ${
-                              paymentForm.method === "paypal"
-                                ? "border-blue-500 bg-blue-50"
-                                : "border-gray-200 hover:border-gray-300"
-                            }`}
-                          >
-                            <div className="flex items-center space-x-3">
-                              <RadioGroupItem value="paypal" id="paypal" />
-                              <div className="flex-1">
-                                <div className="flex items-center gap-4">
-                                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                                    <CreditCard className="h-8 w-8 text-white" />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="paypal" className="text-lg font-semibold cursor-pointer">
-                                      Pay with PayPal
-                                    </Label>
-                                    <div className="flex items-center gap-2 mt-1">
-                                      <Badge variant="outline">Credit/Debit Cards</Badge>
-                                      <Badge variant="outline">PayPal Balance</Badge>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        
+                        
                       </RadioGroup>
                     </div>
 
@@ -604,7 +565,7 @@ export default function RegisterPage() {
                               <li>Open your mobile banking app or Zelle app</li>
                               <li>Select "Send Money" or "Pay with Zelle"</li>
                               <li>
-                                Enter recipient email: <strong>framework4future@gmail.com</strong>
+                                Enter recipient email: <strong>executivecommittee@framework4future.org</strong>
                               </li>
                               <li>
                                 Enter amount: <strong>$30.00</strong>
@@ -652,16 +613,6 @@ export default function RegisterPage() {
                             </div>
 
                             <div className="flex gap-4 pt-4">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="lg"
-                                onClick={() => setCurrentStep(1)}
-                                className="flex-1"
-                              >
-                                <ArrowLeft className="mr-2 h-4 w-4" />
-                                Back
-                              </Button>
                               <Button
                                 type="submit"
                                 size="lg"
