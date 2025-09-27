@@ -164,22 +164,6 @@ export default function OurTeamPage() {
       </div>
 
       {/* Join Our Team Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-purple-600 py-16 px-4 text-center text-white">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Join Our Team?</h2>
-          <p className="text-xl mb-8 opacity-90">
-            We're always looking for passionate individuals who want to make a difference in their community.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-              Apply to Join
-            </button>
-            <button className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
-              Learn More
-            </button>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }
