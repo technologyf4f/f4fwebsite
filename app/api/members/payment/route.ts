@@ -32,7 +32,7 @@ export async function POST(req: Request) {
         payment_method: body.paymentMethod,
         transaction_id: body.transactionId,
         payment_status: "completed",
-        membership_status: "active",
+        membership_status: "pending",
         updated_at: new Date().toISOString(),
       })
       .eq("id", body.memberId)

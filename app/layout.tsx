@@ -9,9 +9,8 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Framework 4 Future - Youth Leadership Development",
-  description:
-    "Empowering youth to become the next generation of leaders through community engagement and service in the Carolinas.",
-    generator: 'v0.dev'
+  description: "Empowering youth to become the next generation of leaders through community engagement and service in the Carolinas.",
+  generator: "v0.dev"
 }
 
 export default function RootLayout({

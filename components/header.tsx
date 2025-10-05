@@ -14,6 +14,8 @@ import { isSupabaseConfigured } from "@/lib/supabase"
 import { VolunteeringManagementDialog } from "@/components/volunteering-management-dialog"
 import { MemberDashboard } from "@/components/member-dashboard"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { MemberManagementDialog } from "@/components/member-management-dialog"
+
 
 // Inline UI Components
 const Button = ({
@@ -102,6 +104,7 @@ export function Header() {
   const [showEventManagement, setShowEventManagement] = useState(false)
   const [showMemberDashboard, setShowMemberDashboard] = useState(false)
   const [showVolunteeringManagement, setShowVolunteeringManagement] = useState(false)
+  const [showMemberManagement, setShowMemberManagement] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [memberId, setMemberId] = useState("")
 
@@ -382,6 +385,24 @@ export function Header() {
                               </svg>
                               <span>Manage Volunteering</span>
                             </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setShowAdminMenu(false)
+                                setShowMemberManagement(true)
+                              }}
+                              className="flex items-center gap-3 w-full px-6 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors font-medium"
+                            >
+                              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 8a3 3 0 100-6 3 3 0 000 6zm7 12c0-4.42-3.58-8-8-8s-8 3.58-8 8"
+                                />
+                              </svg>
+                              <span>Manage Members</span>
+                            </button>
                           </>
                         ) : (
                           <button
@@ -459,6 +480,8 @@ export function Header() {
         onOpenChange={setShowVolunteeringManagement}
         currentUser={memberId}
       />
+
+      <MemberManagementDialog open={showMemberManagement} onOpenChange={setShowMemberManagement} />
 
       <Dialog open={showMemberDashboard} onOpenChange={setShowMemberDashboard}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">

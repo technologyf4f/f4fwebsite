@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server"
 import { authenticateMember } from "@/lib/auth-api"
 
+export async function GET() {
+  return NextResponse.json({ message: "Please use POST method" }, { status: 405 })
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json()

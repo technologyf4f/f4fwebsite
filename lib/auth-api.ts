@@ -78,7 +78,7 @@ export async function authenticateMember(
 
     // Check if member is active
     if (data.membership_status !== "active") {
-      return { success: false, error: "Account is not active. Please complete payment." }
+      return { success: false, error: "Account is not active. Please complete payment and allow a week for verification to complete. If you are still facing issues please reach out to executivecommittee@framework4future.org" }
     }
 
     return { success: true, member: data }

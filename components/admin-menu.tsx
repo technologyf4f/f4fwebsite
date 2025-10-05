@@ -8,7 +8,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { UserCircle, FileText, Calendar, LogOut, ChevronDown } from "lucide-react"
+import { UserCircle, FileText, Calendar, LogOut, ChevronDown, Users } from "lucide-react"
+import { MemberManagementDialog } from "./member-management-dialog"
 
 interface AdminMenuProps {
   username: string
@@ -19,6 +20,10 @@ interface AdminMenuProps {
 
 export function AdminMenu({ username, onLogout, onManageBlogs, onManageEvents }: AdminMenuProps) {
   return (
+    <>
+
+    const [showMemberManagement, setShowMemberManagement] = useState(false)
+
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="flex items-center gap-2 rounded-full">
@@ -44,6 +49,10 @@ export function AdminMenu({ username, onLogout, onManageBlogs, onManageEvents }:
           <Calendar className="h-4 w-4" />
           <span>Manage Events</span>
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setShowMemberManagement(true)} className="flex items-center gap-2 cursor-pointer">
+          <Users className="h-4 w-4" />
+          <span>Manage Members</span>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onLogout} className="flex items-center gap-2 cursor-pointer text-red-600">
           <LogOut className="h-4 w-4" />
@@ -51,5 +60,8 @@ export function AdminMenu({ username, onLogout, onManageBlogs, onManageEvents }:
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+
+    <MemberManagementDialog open={showMemberManagement} onOpenChange={setShowMemberManagement} />
+    </>
   )
 }

@@ -68,6 +68,41 @@ export async function updateMemberPayment(
   }
 }
 
+export async function updateMemberStatus(
+  memberId: string,
+  membership_status: string,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+
+    const { data, error } = await supabase!
+      .from("members")
+      .update({ membership_status })
+      .eq("id", memberId)
+      .select(`
+        id,
+        first_name,
+        last_name,
+        email,
+        membership_status,
+        created_at,
+        updated_at
+      `)
+      .single()
+
+    if (error) throw error
+
+    if (error) {
+      console.error("Error updating member status:", error)
+      return { success: false, error: error.message || "Failed to update member status" }
+    }
+
+    return { success: true }
+  } catch (err) {
+    console.error("Error updating member status:", err)
+    return { success: false, error: "Failed to update member status" }
+  }
+}
+
 export async function getMemberByEmail(email: string): Promise<{ success: boolean; member?: Member; error?: string }> {
   if (!isSupabaseConfigured() || !supabase) {
     console.log("Supabase not configured, simulating member lookup")
