@@ -8,7 +8,7 @@ export default function OurStoryPage() {
       {/* Hero Section with Image */}
       <section className="relative h-96 overflow-hidden">
         <Image
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-fFaNHkjkwEzpjSJscgiEWauZkpmrEP.png"
+          src="/images/design-mode/image.png"
           alt="Framework 4 Future team members"
           fill
           className="object-cover"
