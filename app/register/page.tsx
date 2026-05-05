@@ -142,28 +142,41 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (currentStep === 3) {
-      // Small timeout to let DOM mount
-      setTimeout(() => initCanvas(), 50)
+      // Allow the canvas element to mount before initialising
+      const timer = setTimeout(() => initCanvas(), 100)
+      return () => clearTimeout(timer)
     }
   }, [currentStep, initCanvas])
 
-  const startDraw = useCallback((e: MouseEvent | TouchEvent) => {
+  // Pointer-event based drawing (works for mouse, touch, and stylus)
+  const getPosFromPointer = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current
+    if (!canvas) return null
+    const rect = canvas.getBoundingClientRect()
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+    }
+  }
+
+  const startDraw = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current
     if (!canvas) return
-    e.preventDefault()
+    canvas.setPointerCapture(e.pointerId)
     isDrawingRef.current = true
-    lastPosRef.current = getPos(e, canvas)
+    lastPosRef.current = getPosFromPointer(e)
   }, [])
 
-  const draw = useCallback((e: MouseEvent | TouchEvent) => {
+  const draw = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!isDrawingRef.current) return
     const canvas = canvasRef.current
     if (!canvas) return
-    e.preventDefault()
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-    const pos = getPos(e, canvas)
-    if (lastPosRef.current) {
+    const pos = getPosFromPointer(e)
+    if (lastPosRef.current && pos) {
       ctx.beginPath()
       ctx.moveTo(lastPosRef.current.x, lastPosRef.current.y)
       ctx.lineTo(pos.x, pos.y)
@@ -178,28 +191,7 @@ export default function RegisterPage() {
     lastPosRef.current = null
   }, [])
 
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
 
-    canvas.addEventListener("mousedown", startDraw)
-    canvas.addEventListener("mousemove", draw)
-    canvas.addEventListener("mouseup", stopDraw)
-    canvas.addEventListener("mouseleave", stopDraw)
-    canvas.addEventListener("touchstart", startDraw, { passive: false })
-    canvas.addEventListener("touchmove", draw, { passive: false })
-    canvas.addEventListener("touchend", stopDraw)
-
-    return () => {
-      canvas.removeEventListener("mousedown", startDraw)
-      canvas.removeEventListener("mousemove", draw)
-      canvas.removeEventListener("mouseup", stopDraw)
-      canvas.removeEventListener("mouseleave", stopDraw)
-      canvas.removeEventListener("touchstart", startDraw)
-      canvas.removeEventListener("touchmove", draw)
-      canvas.removeEventListener("touchend", stopDraw)
-    }
-  }, [startDraw, draw, stopDraw])
 
   const clearSignature = () => {
     initCanvas()
@@ -920,6 +912,10 @@ export default function RegisterPage() {
                           height={200}
                           className="w-full cursor-crosshair touch-none block"
                           style={{ height: "180px" }}
+                          onPointerDown={startDraw}
+                          onPointerMove={draw}
+                          onPointerUp={stopDraw}
+                          onPointerLeave={stopDraw}
                         />
                         {!hasSignature && (
                           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
