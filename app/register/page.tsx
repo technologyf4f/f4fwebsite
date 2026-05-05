@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Progress } from "@/components/ui/progress"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   User,
   Mail,
@@ -27,6 +28,9 @@ import {
   ArrowRight,
   Home,
   Sparkles,
+  FileText,
+  PenLine,
+  Trash2,
 } from "lucide-react"
 import Link from "next/link"
 import { createMember, updateMemberPayment } from "@/lib/members-api"
@@ -37,6 +41,14 @@ export default function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [member, setMember] = useState<Member | null>(null)
   const [showConfirmation, setShowConfirmation] = useState(false)
+
+  // Waiver state
+  const [waiverAgreed, setWaiverAgreed] = useState(false)
+  const [signatureName, setSignatureName] = useState("")
+  const [hasSignature, setHasSignature] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const isDrawingRef = useRef(false)
+  const lastPosRef = useRef<{ x: number; y: number } | null>(null)
 
   // Form data
   const [registrationForm, setRegistrationForm] = useState({
@@ -73,28 +85,131 @@ export default function RegisterPage() {
   const steps: RegistrationStep[] = [
     {
       step: 1,
-      title: "Member Registration",
+      title: "Registration",
       description: "Create your account",
       isComplete: currentStep > 1,
     },
     {
       step: 2,
       title: "Payment",
-      description: "Complete your membership",
+      description: "Complete membership",
       isComplete: currentStep > 2,
     },
     {
       step: 3,
+      title: "Waiver",
+      description: "Sign the release form",
+      isComplete: currentStep > 3,
+    },
+    {
+      step: 4,
       title: "Confirmation",
       description: "Welcome to the community",
-      isComplete: currentStep > 3,
+      isComplete: currentStep > 4,
     },
   ]
 
+  // ── Canvas drawing helpers ──────────────────────────────────────────
+  const getPos = (e: MouseEvent | TouchEvent, canvas: HTMLCanvasElement) => {
+    const rect = canvas.getBoundingClientRect()
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    if ("touches" in e) {
+      const touch = e.touches[0]
+      return {
+        x: (touch.clientX - rect.left) * scaleX,
+        y: (touch.clientY - rect.top) * scaleY,
+      }
+    }
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+    }
+  }
+
+  const initCanvas = useCallback(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+    ctx.fillStyle = "#ffffff"
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.strokeStyle = "#1e3a5f"
+    ctx.lineWidth = 2.5
+    ctx.lineCap = "round"
+    ctx.lineJoin = "round"
+  }, [])
+
+  useEffect(() => {
+    if (currentStep === 3) {
+      // Small timeout to let DOM mount
+      setTimeout(() => initCanvas(), 50)
+    }
+  }, [currentStep, initCanvas])
+
+  const startDraw = useCallback((e: MouseEvent | TouchEvent) => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    e.preventDefault()
+    isDrawingRef.current = true
+    lastPosRef.current = getPos(e, canvas)
+  }, [])
+
+  const draw = useCallback((e: MouseEvent | TouchEvent) => {
+    if (!isDrawingRef.current) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    e.preventDefault()
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+    const pos = getPos(e, canvas)
+    if (lastPosRef.current) {
+      ctx.beginPath()
+      ctx.moveTo(lastPosRef.current.x, lastPosRef.current.y)
+      ctx.lineTo(pos.x, pos.y)
+      ctx.stroke()
+    }
+    lastPosRef.current = pos
+    setHasSignature(true)
+  }, [])
+
+  const stopDraw = useCallback(() => {
+    isDrawingRef.current = false
+    lastPosRef.current = null
+  }, [])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    canvas.addEventListener("mousedown", startDraw)
+    canvas.addEventListener("mousemove", draw)
+    canvas.addEventListener("mouseup", stopDraw)
+    canvas.addEventListener("mouseleave", stopDraw)
+    canvas.addEventListener("touchstart", startDraw, { passive: false })
+    canvas.addEventListener("touchmove", draw, { passive: false })
+    canvas.addEventListener("touchend", stopDraw)
+
+    return () => {
+      canvas.removeEventListener("mousedown", startDraw)
+      canvas.removeEventListener("mousemove", draw)
+      canvas.removeEventListener("mouseup", stopDraw)
+      canvas.removeEventListener("mouseleave", stopDraw)
+      canvas.removeEventListener("touchstart", startDraw)
+      canvas.removeEventListener("touchmove", draw)
+      canvas.removeEventListener("touchend", stopDraw)
+    }
+  }, [startDraw, draw, stopDraw])
+
+  const clearSignature = () => {
+    initCanvas()
+    setHasSignature(false)
+  }
+
+  // ── Step handlers ───────────────────────────────────────────────────
   const handleRegistrationSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validate form
     if (
       !registrationForm.firstName ||
       !registrationForm.lastName ||
@@ -163,10 +278,8 @@ export default function RegisterPage() {
       )
 
       if (result.success) {
-        // Simulate processing time
         await new Promise((resolve) => setTimeout(resolve, 2000))
         setCurrentStep(3)
-        setShowConfirmation(true)
       } else {
         alert(result.error || "Failed to process payment. Please try again.")
       }
@@ -190,10 +303,8 @@ export default function RegisterPage() {
       const result = await updateMemberPayment(member.id, "paypal")
 
       if (result.success) {
-        // Simulate PayPal processing time
         await new Promise((resolve) => setTimeout(resolve, 3000))
         setCurrentStep(3)
-        setShowConfirmation(true)
       } else {
         alert(result.error || "Failed to process PayPal payment. Please try again.")
       }
@@ -205,12 +316,28 @@ export default function RegisterPage() {
     }
   }
 
-  const progressPercentage = (currentStep / steps.length) * 100
+  const handleWaiverSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!waiverAgreed) {
+      alert("Please read and agree to the waiver before continuing.")
+      return
+    }
+    if (!signatureName.trim()) {
+      alert("Please type your full name.")
+      return
+    }
+    if (!hasSignature) {
+      alert("Please provide your electronic signature in the signature box.")
+      return
+    }
+    setCurrentStep(4)
+    setShowConfirmation(true)
+  }
+
+  const progressPercentage = ((currentStep - 1) / (steps.length - 1)) * 100
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      {/* Header */}
-
       <div className="container mx-auto px-6 py-12">
         <div className="max-w-4xl mx-auto">
           {/* Progress Header */}
@@ -218,11 +345,11 @@ export default function RegisterPage() {
             <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
               Join Framework for Future
             </h1>
-            <p className="text-xl text-gray-600 mb-8">Complete your membership registration in 3 simple steps</p>
+            <p className="text-xl text-gray-600 mb-8">Complete your membership registration in 4 simple steps</p>
 
             {/* Progress Bar */}
-            <div className="max-w-2xl mx-auto mb-8">
-              <Progress value={progressPercentage} className="h-3 mb-4" />
+            <div className="max-w-3xl mx-auto mb-8">
+              <Progress value={progressPercentage} className="h-3 mb-6" />
               <div className="flex justify-between">
                 {steps.map((step) => (
                   <div key={step.step} className="flex flex-col items-center">
@@ -238,8 +365,8 @@ export default function RegisterPage() {
                       {step.isComplete ? <CheckCircle className="h-5 w-5" /> : step.step}
                     </div>
                     <div className="text-center">
-                      <p className="font-semibold text-sm">{step.title}</p>
-                      <p className="text-xs text-gray-600">{step.description}</p>
+                      <p className="font-semibold text-xs md:text-sm">{step.title}</p>
+                      <p className="text-xs text-gray-500 hidden md:block">{step.description}</p>
                     </div>
                   </div>
                 ))}
@@ -249,7 +376,8 @@ export default function RegisterPage() {
 
           {/* Step Content */}
           <Card className="shadow-xl border-0">
-            {/* Step 1: Registration */}
+
+            {/* ── Step 1: Registration ── */}
             {currentStep === 1 && (
               <>
                 <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-t-lg">
@@ -445,7 +573,7 @@ export default function RegisterPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="font-bold text-orange-800 text-lg">Lifetime Membership</h4>
-                          <p className="text-orange-600">One-time payment • Full access to all features</p>
+                          <p className="text-orange-600">One-time payment &bull; Full access to all features</p>
                         </div>
                         <div className="text-right">
                           <div className="text-3xl font-bold text-orange-600">$30</div>
@@ -454,7 +582,6 @@ export default function RegisterPage() {
                       </div>
                     </div>
 
-                    {/* Submit Button */}
                     <div className="pt-6">
                       <Button
                         type="submit"
@@ -480,7 +607,7 @@ export default function RegisterPage() {
               </>
             )}
 
-            {/* Step 2: Payment */}
+            {/* ── Step 2: Payment ── */}
             {currentStep === 2 && (
               <>
                 <CardHeader className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-t-lg">
@@ -513,7 +640,6 @@ export default function RegisterPage() {
                         onValueChange={(value) => setPaymentForm({ ...paymentForm, method: value })}
                         className="space-y-4"
                       >
-                        {/* Zelle Option */}
                         <div className="relative">
                           <div
                             className={`border-2 rounded-lg p-6 cursor-pointer transition-all ${
@@ -543,13 +669,9 @@ export default function RegisterPage() {
                             </div>
                           </div>
                         </div>
-
-                        
-                        
                       </RadioGroup>
                     </div>
 
-                    {/* Payment Details */}
                     {paymentForm.method === "zelle" && (
                       <Card className="border-purple-200 bg-purple-50">
                         <CardHeader>
@@ -563,14 +685,14 @@ export default function RegisterPage() {
                             <h4 className="font-semibold text-gray-900">Step-by-Step Guide:</h4>
                             <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700">
                               <li>Open your mobile banking app or Zelle app</li>
-                              <li>Select "Send Money" or "Pay with Zelle"</li>
+                              <li>Select &quot;Send Money&quot; or &quot;Pay with Zelle&quot;</li>
                               <li>
                                 Enter recipient email: <strong>executivecommittee@framework4future.org</strong>
                               </li>
                               <li>
                                 Enter amount: <strong>$30.00</strong>
                               </li>
-                              <li>Add memo: "Membership Registration"</li>
+                              <li>Add memo: &quot;Membership Registration&quot;</li>
                               <li>Complete the transfer and copy the transaction ID</li>
                             </ol>
                           </div>
@@ -626,7 +748,7 @@ export default function RegisterPage() {
                                   </div>
                                 ) : (
                                   <>
-                                    Complete Registration
+                                    Continue to Waiver
                                     <ArrowRight className="ml-2 h-4 w-4" />
                                   </>
                                 )}
@@ -636,95 +758,246 @@ export default function RegisterPage() {
                         </CardContent>
                       </Card>
                     )}
-
-                    {paymentForm.method === "paypal" && (
-                      <Card className="border-blue-200 bg-blue-50">
-                        <CardHeader>
-                          <CardTitle className="text-blue-800 flex items-center gap-2">
-                            <CreditCard className="h-5 w-5" />
-                            PayPal Payment
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                          <div className="bg-white rounded-lg p-6">
-                            <h4 className="font-semibold text-gray-900 mb-4">Secure Payment with PayPal</h4>
-                            <p className="text-gray-700 mb-4">
-                              Pay securely with your PayPal account, credit card, or debit card. Your payment
-                              information is protected by PayPal's advanced security.
-                            </p>
-
-                            <div className="grid md:grid-cols-2 gap-4">
-                              <div className="bg-blue-50 rounded-lg p-4 text-center">
-                                <Shield className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-                                <p className="font-semibold text-gray-900">Secure Payment</p>
-                                <p className="text-sm text-gray-600">256-bit SSL encryption</p>
-                              </div>
-                              <div className="bg-blue-50 rounded-lg p-4 text-center">
-                                <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                                <p className="font-semibold text-gray-900">Instant Processing</p>
-                                <p className="text-sm text-gray-600">Immediate confirmation</p>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex gap-4">
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="lg"
-                              onClick={() => setCurrentStep(1)}
-                              className="flex-1"
-                            >
-                              <ArrowLeft className="mr-2 h-4 w-4" />
-                              Back
-                            </Button>
-                            <Button
-                              onClick={handlePayPalPayment}
-                              size="lg"
-                              disabled={isSubmitting}
-                              className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-                            >
-                              {isSubmitting ? (
-                                <div className="flex items-center gap-2">
-                                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                  Processing with PayPal...
-                                </div>
-                              ) : (
-                                <>
-                                  Pay $30.00 with PayPal
-                                  <ArrowRight className="ml-2 h-4 w-4" />
-                                </>
-                              )}
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
                   </div>
                 </CardContent>
               </>
             )}
 
-            {/* Step 3: Confirmation */}
+            {/* ── Step 3: Waiver ── */}
             {currentStep === 3 && (
+              <>
+                <CardHeader className="bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-t-lg">
+                  <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                    <FileText className="h-6 w-6" />
+                    Step 3: Volunteer Waiver &amp; Release Form
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <form onSubmit={handleWaiverSubmit} className="space-y-8">
+
+                    {/* Waiver text */}
+                    <div>
+                      <p className="text-gray-600 mb-4 text-sm">
+                        Please read the full waiver below, then provide your electronic signature at the bottom.
+                        Fields marked with <span className="text-red-500">*</span> are required.
+                      </p>
+                      <ScrollArea className="h-80 rounded-lg border border-amber-200 bg-amber-50">
+                        <div className="p-6 text-sm text-gray-800 leading-relaxed space-y-4">
+                          <h2 className="text-lg font-bold text-center text-gray-900">
+                            VOLUNTEER WAIVER AND RELEASE FORM
+                          </h2>
+                          <p className="text-center text-gray-600 text-xs">Framework for Future (F4F)</p>
+
+                          <p>
+                            I, the undersigned volunteer, hereby agree to the following terms and conditions in
+                            connection with my volunteer service with <strong>Framework for Future (F4F)</strong>:
+                          </p>
+
+                          <div>
+                            <h3 className="font-bold text-gray-900 mb-2">1. ASSUMPTION OF RISK</h3>
+                            <p>
+                              I understand that volunteering with Framework for Future (F4F) may involve certain
+                              activities that could result in injury, illness, or property damage. I voluntarily
+                              choose to participate in these activities and assume full responsibility for any
+                              risks, dangers, or hazards that may arise from my participation.
+                            </p>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-gray-900 mb-2">2. RELEASE OF LIABILITY</h3>
+                            <p>
+                              In consideration of the opportunity to volunteer with Framework for Future (F4F), I
+                              hereby release, discharge, and hold harmless Framework for Future (F4F), its
+                              officers, directors, employees, volunteers, agents, and representatives
+                              (collectively, the &quot;Released Parties&quot;) from any and all claims, demands,
+                              damages, losses, liabilities, costs, and expenses (including attorneys&apos; fees)
+                              arising out of or related to my volunteer service, including but not limited to:
+                            </p>
+                            <ul className="list-disc list-inside space-y-1 mt-2 ml-2">
+                              <li>Personal injury, illness, or death</li>
+                              <li>Property damage or loss</li>
+                              <li>Any other harm or damage that may occur during my volunteer activities</li>
+                            </ul>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-gray-900 mb-2">3. INDEMNIFICATION</h3>
+                            <p>
+                              I agree to indemnify and hold harmless the Released Parties from any claims,
+                              damages, or expenses arising from my actions or omissions during my volunteer
+                              service with Framework for Future (F4F).
+                            </p>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-gray-900 mb-2">4. MEDICAL TREATMENT</h3>
+                            <p>
+                              I authorize Framework for Future (F4F) to seek emergency medical treatment on my
+                              behalf if I am unable to do so myself during volunteer activities. I understand
+                              that I am responsible for any medical costs incurred.
+                            </p>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-gray-900 mb-2">5. PHOTO AND MEDIA RELEASE</h3>
+                            <p>
+                              I grant Framework for Future (F4F) the right to photograph, record, or otherwise
+                              capture my image or likeness during volunteer activities and to use such images or
+                              recordings for promotional, educational, or other organizational purposes without
+                              compensation to me.
+                            </p>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-gray-900 mb-2">6. CODE OF CONDUCT</h3>
+                            <p>
+                              I agree to conduct myself in a professional and respectful manner during all
+                              volunteer activities. I understand that Framework for Future (F4F) reserves the
+                              right to dismiss any volunteer who does not adhere to its standards of conduct.
+                            </p>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-gray-900 mb-2">7. GOVERNING LAW</h3>
+                            <p>
+                              This Waiver and Release Form shall be governed by and construed in accordance with
+                              the laws of the State of North Carolina. Any disputes arising from this agreement
+                              shall be resolved in the courts of Mecklenburg County, North Carolina.
+                            </p>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-gray-900 mb-2">8. ACKNOWLEDGMENT</h3>
+                            <p>
+                              By signing this form, I acknowledge that I have read and fully understand this
+                              Waiver and Release Form. I am signing this agreement voluntarily and without any
+                              duress or undue influence. I understand that this is a binding legal document.
+                            </p>
+                          </div>
+                        </div>
+                      </ScrollArea>
+                    </div>
+
+                    {/* Agreement checkbox */}
+                    <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-lg p-4">
+                      <input
+                        type="checkbox"
+                        id="waiverAgreed"
+                        checked={waiverAgreed}
+                        onChange={(e) => setWaiverAgreed(e.target.checked)}
+                        className="mt-1 h-5 w-5 rounded border-gray-300 accent-amber-600 cursor-pointer"
+                      />
+                      <label htmlFor="waiverAgreed" className="text-sm text-gray-700 cursor-pointer leading-relaxed">
+                        <span className="font-semibold">I have read and agree</span> to the Volunteer Waiver and
+                        Release Form above. I understand that Framework for Future (F4F) is not responsible for
+                        any injuries, illnesses, or damages that may occur during my volunteer activities.{" "}
+                        <span className="text-red-500">*</span>
+                      </label>
+                    </div>
+
+                    {/* Typed name */}
+                    <div className="space-y-2">
+                      <Label htmlFor="signatureName" className="text-base font-semibold flex items-center gap-2">
+                        <PenLine className="h-4 w-4 text-amber-600" />
+                        Full Name (typed) <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="signatureName"
+                        type="text"
+                        value={signatureName}
+                        onChange={(e) => setSignatureName(e.target.value)}
+                        placeholder="Type your full legal name"
+                        className="h-12 text-base"
+                      />
+                      <p className="text-xs text-gray-500">
+                        Type your full name exactly as it appears on your ID.
+                      </p>
+                    </div>
+
+                    {/* Electronic signature pad */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-base font-semibold flex items-center gap-2">
+                          <PenLine className="h-4 w-4 text-amber-600" />
+                          Electronic Signature <span className="text-red-500">*</span>
+                        </Label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={clearSignature}
+                          className="text-gray-500 border-gray-300 hover:text-red-600 hover:border-red-300"
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          Clear
+                        </Button>
+                      </div>
+
+                      <div className="relative rounded-xl border-2 border-dashed border-amber-300 bg-white overflow-hidden">
+                        <canvas
+                          ref={canvasRef}
+                          width={800}
+                          height={200}
+                          className="w-full cursor-crosshair touch-none block"
+                          style={{ height: "180px" }}
+                        />
+                        {!hasSignature && (
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <p className="text-gray-400 text-sm select-none">
+                              Sign here using your mouse or finger
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      <p className="text-xs text-gray-500">
+                        Draw your signature in the box above. Use your mouse (click &amp; drag) or touch screen (tap &amp; drag).
+                      </p>
+                    </div>
+
+                    {/* Navigation */}
+                    <div className="flex gap-4 pt-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="lg"
+                        onClick={() => setCurrentStep(2)}
+                        className="flex-1"
+                      >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back
+                      </Button>
+                      <Button
+                        type="submit"
+                        size="lg"
+                        className="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white"
+                      >
+                        Submit &amp; Continue
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </>
+            )}
+
+            {/* ── Step 4: Confirmation ── */}
+            {currentStep === 4 && (
               <>
                 <CardHeader className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-t-lg">
                   <CardTitle className="text-2xl font-bold flex items-center gap-2">
                     <CheckCircle className="h-6 w-6" />
-                    Step 3: Confirmation
+                    Step 4: Confirmation
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-12 text-center">
                   {/* Animated Success Icon */}
                   <div className="relative mb-8">
                     <div className="mx-auto w-32 h-32 relative">
-                      {/* Floating elements */}
                       <div className="absolute -top-2 -left-2 w-4 h-4 bg-yellow-400 rounded-full animate-bounce"></div>
                       <div className="absolute -top-1 -right-3 w-3 h-3 bg-pink-400 rounded-full animate-bounce delay-300"></div>
                       <div className="absolute -bottom-2 -left-3 w-3 h-3 bg-green-400 rounded-full animate-bounce delay-500"></div>
                       <div className="absolute -bottom-1 -right-2 w-4 h-4 bg-blue-400 rounded-full animate-bounce delay-700"></div>
-
-                      {/* Main success circle */}
                       <div className="w-32 h-32 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-xl animate-pulse">
                         <CheckCircle className="h-16 w-16 text-white" />
                       </div>
@@ -734,7 +1007,7 @@ export default function RegisterPage() {
                   <div className="space-y-6">
                     <div>
                       <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-4">
-                        Welcome to Framework for Future! 🎉
+                        Welcome to Framework for Future!
                       </h2>
                       <p className="text-lg text-gray-700 leading-relaxed max-w-2xl mx-auto">
                         Thank you for becoming a member of Framework4Future, {member?.first_name}! Once your payment has
@@ -743,7 +1016,6 @@ export default function RegisterPage() {
                       </p>
                     </div>
 
-                    {/* Success Features */}
                     <div className="grid md:grid-cols-3 gap-6 mt-8">
                       <div className="flex flex-col items-center gap-3">
                         <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
@@ -795,20 +1067,20 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Confirmation Dialog (Alternative display) */}
+      {/* Confirmation Dialog */}
       <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
         <DialogContent className="max-w-2xl p-0 overflow-hidden">
           <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-12 text-center">
             <DialogHeader>
               <DialogTitle className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-4">
-                Registration Complete! 🎉
+                Registration Complete!
               </DialogTitle>
             </DialogHeader>
 
             <div className="space-y-6">
               <p className="text-lg text-gray-700 leading-relaxed">
-                Your membership registration has been successfully completed. You'll receive a confirmation email
-                shortly with next steps and access information.
+                Your membership registration and waiver have been successfully completed. You&apos;ll receive a
+                confirmation email shortly with next steps and access information.
               </p>
 
               <div className="flex justify-center">

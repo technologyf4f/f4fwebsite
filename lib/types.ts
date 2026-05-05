@@ -1,3 +1,10 @@
+export interface RegistrationStep {
+  step: number
+  title: string
+  description: string
+  isComplete: boolean
+}
+
 export interface MemberRegistration {
   firstName: string
   lastName: string
