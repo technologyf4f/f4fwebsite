@@ -783,97 +783,74 @@ export default function RegisterPage() {
                       </p>
                       <ScrollArea className="h-80 rounded-lg border border-amber-200 bg-amber-50">
                         <div className="p-6 text-sm text-gray-800 leading-relaxed space-y-4">
-                          <h2 className="text-lg font-bold text-center text-gray-900">
-                            VOLUNTEER WAIVER AND RELEASE FORM
+                          <h2 className="text-lg font-bold text-center text-gray-900 uppercase tracking-wide">
+                            Waiver and Release Form
                           </h2>
-                          <p className="text-center text-gray-600 text-xs">Framework for Future (F4F)</p>
+                          <h3 className="text-base font-bold text-center text-gray-900 uppercase">
+                            Release of Liability
+                          </h3>
 
                           <p>
-                            I, the undersigned volunteer, hereby agree to the following terms and conditions in
-                            connection with my volunteer service with <strong>Framework for Future (F4F)</strong>:
+                            In return for being allowed to participate in Framework For Future volunteer activities
+                            and all related activities, including any activities incidental to such participation
+                            (&quot;Volunteer Activities&quot;), the undersigned Volunteer or Parent/Legal Guardian
+                            of Volunteer if Volunteer is under age 18 (hereafter referred to using &quot;I&quot;,
+                            &quot;me&quot;, or &quot;my&quot;) releases and agrees not to sue the Framework for
+                            Future or its officers, directors, employees, sub-contractors, sponsors, agents and
+                            affiliates (&quot;the Organization&quot;) from all present and future claims that may
+                            be made by me, my family, estate, heirs, or assigns for property damage, personal
+                            injury, or wrongful death arising as a result of my participation in the Volunteer
+                            Activities wherever, whenever, or however the same may occur.
                           </p>
 
-                          <div>
-                            <h3 className="font-bold text-gray-900 mb-2">1. ASSUMPTION OF RISK</h3>
-                            <p>
-                              I understand that volunteering with Framework for Future (F4F) may involve certain
-                              activities that could result in injury, illness, or property damage. I voluntarily
-                              choose to participate in these activities and assume full responsibility for any
-                              risks, dangers, or hazards that may arise from my participation.
-                            </p>
-                          </div>
+                          <p>
+                            I understand and agree that the Organization are not responsible for any injury or
+                            property damage arising out of the Volunteer Activities, even if caused by their
+                            ordinary negligence or otherwise.
+                          </p>
 
-                          <div>
-                            <h3 className="font-bold text-gray-900 mb-2">2. RELEASE OF LIABILITY</h3>
-                            <p>
-                              In consideration of the opportunity to volunteer with Framework for Future (F4F), I
-                              hereby release, discharge, and hold harmless Framework for Future (F4F), its
-                              officers, directors, employees, volunteers, agents, and representatives
-                              (collectively, the &quot;Released Parties&quot;) from any and all claims, demands,
-                              damages, losses, liabilities, costs, and expenses (including attorneys&apos; fees)
-                              arising out of or related to my volunteer service, including but not limited to:
-                            </p>
-                            <ul className="list-disc list-inside space-y-1 mt-2 ml-2">
-                              <li>Personal injury, illness, or death</li>
-                              <li>Property damage or loss</li>
-                              <li>Any other harm or damage that may occur during my volunteer activities</li>
-                            </ul>
-                          </div>
+                          <p>
+                            I understand that participation in the Volunteer Activities involves certain risks,
+                            including, but not limited to, serious injury and death. I am voluntarily
+                            participating in the Volunteer Activities with knowledge of the danger involved and I
+                            agree to accept all risks of participation.
+                          </p>
 
-                          <div>
-                            <h3 className="font-bold text-gray-900 mb-2">3. INDEMNIFICATION</h3>
-                            <p>
-                              I agree to indemnify and hold harmless the Released Parties from any claims,
-                              damages, or expenses arising from my actions or omissions during my volunteer
-                              service with Framework for Future (F4F).
-                            </p>
-                          </div>
+                          <p>
+                            I also agree to indemnify and hold harmless the Organization for all claims arising
+                            out of my participation in the Volunteer Activities.
+                          </p>
 
-                          <div>
-                            <h3 className="font-bold text-gray-900 mb-2">4. MEDICAL TREATMENT</h3>
-                            <p>
-                              I authorize Framework for Future (F4F) to seek emergency medical treatment on my
-                              behalf if I am unable to do so myself during volunteer activities. I understand
-                              that I am responsible for any medical costs incurred.
-                            </p>
-                          </div>
+                          <p>
+                            I understand that this document is intended to be as broad and inclusive as permitted
+                            by the laws of the state in which the Volunteer Activities take place and agree that
+                            if any portion of this Agreement is invalid, the remainder will continue in full
+                            legal force and effect.
+                          </p>
 
-                          <div>
-                            <h3 className="font-bold text-gray-900 mb-2">5. PHOTO AND MEDIA RELEASE</h3>
-                            <p>
-                              I grant Framework for Future (F4F) the right to photograph, record, or otherwise
-                              capture my image or likeness during volunteer activities and to use such images or
-                              recordings for promotional, educational, or other organizational purposes without
-                              compensation to me.
-                            </p>
-                          </div>
+                          <p>
+                            I also acknowledge that the Organization have not arranged and do not carry any
+                            insurance of any kind for my benefit or that of Volunteer (if Volunteer is under 18),
+                            my parents, guardians, trustees, heirs, executors, administrators, successors and
+                            assigns.
+                          </p>
 
-                          <div>
-                            <h3 className="font-bold text-gray-900 mb-2">6. CODE OF CONDUCT</h3>
-                            <p>
-                              I agree to conduct myself in a professional and respectful manner during all
-                              volunteer activities. I understand that Framework for Future (F4F) reserves the
-                              right to dismiss any volunteer who does not adhere to its standards of conduct.
-                            </p>
-                          </div>
+                          <p>
+                            I represent that, to the best of my knowledge, the Volunteer is in good health and
+                            suffers from no physical condition that would make participation in the Volunteer
+                            Activities inadvisable.
+                          </p>
 
-                          <div>
-                            <h3 className="font-bold text-gray-900 mb-2">7. GOVERNING LAW</h3>
-                            <p>
-                              This Waiver and Release Form shall be governed by and construed in accordance with
-                              the laws of the State of North Carolina. Any disputes arising from this agreement
-                              shall be resolved in the courts of Mecklenburg County, North Carolina.
-                            </p>
-                          </div>
+                          <p>
+                            I understand and acknowledge that this is a Release of Liability and a contract
+                            between myself and the Organization and I agree to be bound by it.
+                          </p>
 
-                          <div>
-                            <h3 className="font-bold text-gray-900 mb-2">8. ACKNOWLEDGMENT</h3>
-                            <p>
-                              By signing this form, I acknowledge that I have read and fully understand this
-                              Waiver and Release Form. I am signing this agreement voluntarily and without any
-                              duress or undue influence. I understand that this is a binding legal document.
-                            </p>
-                          </div>
+                          <p>
+                            By signing below, I indicate that I have read, understood, and agreed to the terms
+                            of this Waiver and Release Form. I further acknowledge that no oral representations,
+                            statements, or inducements apart from the foregoing written agreement have been made.
+                          </p>
                         </div>
                       </ScrollArea>
                     </div>
@@ -888,9 +865,12 @@ export default function RegisterPage() {
                         className="mt-1 h-5 w-5 rounded border-gray-300 accent-amber-600 cursor-pointer"
                       />
                       <label htmlFor="waiverAgreed" className="text-sm text-gray-700 cursor-pointer leading-relaxed">
-                        <span className="font-semibold">I have read and agree</span> to the Volunteer Waiver and
-                        Release Form above. I understand that Framework for Future (F4F) is not responsible for
-                        any injuries, illnesses, or damages that may occur during my volunteer activities.{" "}
+                        <span className="font-semibold">I have read and agree</span> to the Waiver and Release
+                        Form above. I release and agree not to sue Framework for Future or its officers,
+                        directors, employees, sub-contractors, sponsors, agents and affiliates from all present
+                        and future claims for property damage, personal injury, or wrongful death arising from
+                        my participation in Volunteer Activities. I voluntarily accept all risks of
+                        participation.{" "}
                         <span className="text-red-500">*</span>
                       </label>
                     </div>
